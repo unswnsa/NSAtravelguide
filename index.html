@@ -203,15 +203,10 @@ UNSW Nippon Students Association • Powered by Notion
 </footer>
 
 <script>
-/* ===========================
-   🔑 REPLACE THESE
-=========================== */
 const NOTION_TOKEN = "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";
 const DATABASE_ID = "347468fdd09e808785d1daf84c42e0f4?v=347468fdd09e8040bf01000c4c2f9f71";
 
-/* ===========================
-   FETCH FROM NOTION
-=========================== */
+/* ---------- FETCH DATA ---------- */
 async function fetchNotionEntries() {
   try {
     const response = await fetch(
@@ -227,50 +222,61 @@ async function fetchNotionEntries() {
     );
 
     const data = await response.json();
-    return data.results;
+    console.log(data);
+    return data.results || [];
 
-  } catch(error) {
-    console.error(error);
+  } catch (error) {
+    console.error("Fetch error:", error);
     return [];
   }
 }
 
-/* ===========================
-   RENDER ENTRIES
-=========================== */
-function renderEntries(entries) {
+/* ---------- UNIVERSAL TEXT READER ---------- */
+function getText(prop) {
+  if (!prop) return "";
 
+  if (prop.rich_text) {
+    return prop.rich_text.map(x => x.plain_text).join("");
+  }
+
+  if (prop.select) {
+    return prop.select?.name || "";
+  }
+
+  if (prop.multi_select) {
+    return prop.multi_select.map(x => x.name).join(", ");
+  }
+
+  if (prop.title) {
+    return prop.title.map(x => x.plain_text).join("");
+  }
+
+  return "";
+}
+
+/* ---------- RENDER ---------- */
+function renderEntries(entries) {
   const container = document.getElementById("travel-container");
   container.innerHTML = "";
 
   const approved = entries.filter(page =>
-    page.properties.Status?.select?.name === "Approved"
+    getText(page.properties.Status) === "Approved"
   );
 
-  if(approved.length === 0){
+  if (approved.length === 0) {
     container.innerHTML =
       `<div class="loading">No approved entries yet.</div>`;
     return;
   }
 
   approved.forEach(page => {
-
     const props = page.properties;
 
-    const title =
-      props.Title?.title?.[0]?.plain_text || "Untitled";
-
-    const city =
-      props.City?.rich_text?.[0]?.plain_text || "";
-
-    const description =
-      props.Description?.rich_text?.[0]?.plain_text || "";
-
-    const category =
-      props.Category?.select?.name || "Guide";
-
-    const tips =
-      props.Tips?.rich_text?.[0]?.plain_text || "";
+    const title = getText(props.Title);
+    const city = getText(props.City);
+    const description = getText(props.Description);
+    const category = getText(props.Category);
+    const tips = getText(props.Tips);
 
     container.innerHTML += `
       <div class="card">
@@ -288,9 +294,7 @@ function renderEntries(entries) {
   });
 }
 
-/* ===========================
-   LOAD PAGE
-=========================== */
+/* ---------- LOAD ---------- */
 async function loadGuide() {
   const entries = await fetchNotionEntries();
   renderEntries(entries);
@@ -298,6 +302,5 @@ async function loadGuide() {
 
 loadGuide();
 </script>
-
 </body>
 </html>
