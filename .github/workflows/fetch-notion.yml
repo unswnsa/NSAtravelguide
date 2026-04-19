@@ -1,1 +1,176 @@
+name: Sync Notion to Travel Guide
 
+on:
+  schedule:
+    # Runs every hour — change to your preferred frequency
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub Actions tab
+  push:
+    branches: [main]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to commit data.json back to the repo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch from Notion and build data.json
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_FORM_URL: ${{ secrets.NOTION_FORM_URL }}
+        run: |
+          node << 'EOF'
+          const https = require('https');
+          const fs = require('fs');
+
+          const TOKEN = process.env.NOTION_TOKEN;
+          const DB_ID = process.env.NOTION_DATABASE_ID;
+          const FORM_URL = process.env.NOTION_FORM_URL || '';
+
+          if (!TOKEN || !DB_ID) {
+            console.error('❌ Missing NOTION_TOKEN or NOTION_DATABASE_ID secrets.');
+            process.exit(1);
+          }
+
+          // Helper: HTTPS POST to Notion API
+          function notionPost(path, body) {
+            return new Promise((resolve, reject) => {
+              const data = JSON.stringify(body);
+              const options = {
+                hostname: 'api.notion.com',
+                path,
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${TOKEN}`,
+                  'Notion-Version': '2022-06-28',
+                  'Content-Type': 'application/json',
+                  'Content-Length': Buffer.byteLength(data),
+                }
+              };
+              const req = https.request(options, (res) => {
+                let body = '';
+                res.on('data', chunk => body += chunk);
+                res.on('end', () => {
+                  try { resolve(JSON.parse(body)); }
+                  catch (e) { reject(new Error('Invalid JSON: ' + body)); }
+                });
+              });
+              req.on('error', reject);
+              req.write(data);
+              req.end();
+            });
+          }
+
+          // Helper: extract text from a Notion rich_text or title property
+          function getText(prop) {
+            if (!prop) return '';
+            if (prop.type === 'title') return prop.title?.map(t => t.plain_text).join('') || '';
+            if (prop.type === 'rich_text') return prop.rich_text?.map(t => t.plain_text).join('') || '';
+            if (prop.type === 'select') return prop.select?.name || '';
+            if (prop.type === 'multi_select') return prop.multi_select?.map(s => s.name).join(', ') || '';
+            if (prop.type === 'url') return prop.url || '';
+            if (prop.type === 'email') return prop.email || '';
+            if (prop.type === 'date') return prop.date?.start || '';
+            if (prop.type === 'checkbox') return prop.checkbox ? 'Yes' : 'No';
+            return '';
+          }
+
+          async function fetchAllPages() {
+            let results = [];
+            let cursor = undefined;
+
+            do {
+              const body = {
+                filter: {
+                  property: 'Status',
+                  status: { equals: 'Approved' }
+                  // If your Status field is a Select (not Status type), use:
+                  // select: { equals: 'Approved' }
+                },
+                sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+                page_size: 100
+              };
+              if (cursor) body.start_cursor = cursor;
+
+              const res = await notionPost(`/v1/databases/${DB_ID}/query`, body);
+
+              if (res.object === 'error') {
+                // Fallback: try select filter if status type failed
+                console.warn('Status filter failed, trying select filter...');
+                const fallback = await notionPost(`/v1/databases/${DB_ID}/query`, {
+                  filter: {
+                    property: 'Status',
+                    select: { equals: 'Approved' }
+                  },
+                  sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+                  page_size: 100
+                });
+                if (fallback.object === 'error') {
+                  console.error('❌ Notion API error:', fallback.message);
+                  process.exit(1);
+                }
+                results = results.concat(fallback.results || []);
+                break;
+              }
+
+              results = results.concat(res.results || []);
+              cursor = res.has_more ? res.next_cursor : undefined;
+            } while (cursor);
+
+            return results;
+          }
+
+          (async () => {
+            console.log('📡 Fetching approved entries from Notion...');
+            const pages = await fetchAllPages();
+            console.log(`✅ Found ${pages.length} approved entries`);
+
+            const entries = pages.map(page => {
+              const p = page.properties;
+              return {
+                id: page.id,
+                title: getText(p['Name'] || p['Title'] || p['Place Name'] || p['Recommendation']),
+                city: getText(p['City'] || p['Location'] || p['Region']),
+                category: getText(p['Category'] || p['Type']),
+                description: getText(p['Description'] || p['Tip'] || p['Details'] || p['Notes']),
+                link: getText(p['Link'] || p['URL'] || p['Maps Link'] || p['Google Maps']),
+                submittedBy: getText(p['Submitted By'] || p['Name'] || p['Member']),
+                date: page.created_time ? new Date(page.created_time).toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' }) : '',
+              };
+            });
+
+            const output = {
+              lastUpdated: new Date().toISOString(),
+              formUrl: FORM_URL,
+              totalEntries: entries.length,
+              entries
+            };
+
+            fs.writeFileSync('data.json', JSON.stringify(output, null, 2));
+            console.log('💾 data.json written successfully');
+            console.log('📊 Summary:', entries.length, 'entries from', new Set(entries.map(e => e.city).filter(Boolean)).size, 'cities');
+          })();
+          EOF
+
+      - name: Commit and push data.json
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data.json
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "✅ No changes to data.json — skipping commit"
+          else
+            git commit -m "chore: sync Notion travel guide entries [$(date -u '+%Y-%m-%d %H:%M')] [skip ci]"
+            git push
+          fi
