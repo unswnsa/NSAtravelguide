@@ -1,7 +1,8 @@
 {
-  "lastUpdated": "2026-04-19T09:45:10.490Z",
+  "lastUpdated": "2026-04-19T09:53:40.322Z",
+  "totalEntries": 4,
+  "totalCities": 4,
   "formUrl": "https://spangle-throat-568.notion.site/347468fdd09e807f9bb0d4f3878b7d0a?pvs=105",
-  "totalEntries": 3,
   "entries": [
     {
       "id": "347468fd-d09e-80ac-b355-fc2a9f96aa60",
@@ -9,7 +10,11 @@
       "city": "Osaka",
       "category": "Entertainment",
       "description": "Vibrant entertainment district known for enormous illuminated billboards, street food culture, and the famous Glico Running Man sign along the Dotonbori canal",
-      "link": "",
+      "mapLink": "https://maps.app.goo.gl/EFeQcTqkEL4reMhP8",
+      "website": "",
+      "photos": [
+        "https://prod-files-secure.s3.us-west-2.amazonaws.com/04710ccf-f52a-4b96-970b-dae0fc12890a/33fe4e1b-b742-45fe-8b59-169799b559e1/ss.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466SVIA2VAH%2F20260419%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260419T095340Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEDgaCXVzLXdlc3QtMiJHMEUCIQDPWtMxnGnbLtwHJKu8u4zwxhz0ERHJJdkNswmCwnGHrwIgYz0cyEEn9h%2B4mwzLJVnU%2FDpcujOEetJ1KYL4pQ4e7TYq%2FwMIARAAGgw2Mzc0MjMxODM4MDUiDDSKowKP5ChJhgSIKCrcA9nSivAqSD3xOsgJkrx7ckDJESRbZXhxyVPLMysr3FjIpU71Cc9NKaZ4QuMBqsXoaDDJp5qr6Nb%2BLFcZCK8DfwkgfvNc%2BNYBCrJVTK0WL0DIwM5YLuRCUtG44t5ZUoRUuL2cZLfUE6kjLJb1lNH8q6MDYZrBnFAW%2BGaEzp%2FLgRp7onXxyiqympICAtutNLVBlub2ATidj%2F6wFS4pCCt7FOUvqYz0azPo3EEgFOj518tp6ddsFZDAt5I4XRUADslYH%2FieFiA2kJpyC3eY3%2FQbIhSg%2BRJVVCymmLIjsCCcdSNw1dJw31yQwhGi7QiqRGzUa8Z2PyPk7te8VekR4JCzH%2FXzKAV47b6IUuw9mTVcwfN9MJRMl0tf2S3SrzH6zOi0xhBvfqml1mjM3QUDHAFLMH6Cxjego3VRRZLiNDRPNpGPJ2oL%2BxI%2F1KU2KuVNaPo58O0RlwVRnMkus2WxyT5TDwFKNmI%2FVfzf9t%2FWMWLfMd7PouWGSEaIK7ZeBxBW16abONmCKdSe3avzoruL51l3EkCoJ7qf5qDXY41vog0aU9G4wzzhTYjd7hh7MVv7v1g6prZwGnxiBnobAkUV499AAJCtjuXiyaSVMmWbPhyZ31roUmOX9rCtJDagfEdnML%2BWks8GOqUBhehD3XtsJBI3USHHu311C013cKZm7%2F80ptGoao9OfyErpKZZwS5pJpF6uKqqIAW87r41oRfb6FD08YWNFcvNe%2FyN8XfOx8VdkC7d3Xh%2BHZWzaJC2RAzmdXZsb1A8kdNm3JPze7P1KK11GG7r8ejch83CaBVSeoJ91UzFJSOLvgazqIZUDpMUTc8MInBWcG37dntYx5LjTXJh09UnMhcisVRyUT4u&X-Amz-Signature=967fa823f0b2db513e2868fdf76f919dab41922baed33dcd5fbaf8142f51c998&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+      ],
       "submittedBy": "Phoebe",
       "status": "Approved",
       "date": "19 Apr 2026"
@@ -20,9 +25,24 @@
       "city": "Kyoto",
       "category": "Temple",
       "description": "Stunning golden pavilion set in a serene zen garden with reflecting pond, one of Japan's most iconic landmarks showcasing traditional architecture",
-      "link": "",
+      "mapLink": "",
+      "website": "",
+      "photos": [],
       "submittedBy": "",
       "status": "Approved",
+      "date": "19 Apr 2026"
+    },
+    {
+      "id": "347468fd-d09e-80ff-a185-cf7e44a89d8a",
+      "title": "Senso-ji Temple",
+      "city": "Tokyo",
+      "category": "Temple",
+      "description": "Ancient Buddhist temple and Tokyo's oldest, famous for its massive red lantern gate and traditional Nakamise shopping street leading to the main hall",
+      "mapLink": "",
+      "website": "",
+      "photos": [],
+      "submittedBy": "",
+      "status": "Pending",
       "date": "19 Apr 2026"
     },
     {
@@ -31,7 +51,11 @@
       "city": "test",
       "category": "Accommodation",
       "description": "test",
-      "link": "",
+      "mapLink": "https://maps.app.goo.gl/CXHR4WHtF8BkaAWJ6",
+      "website": "",
+      "photos": [
+        "https://prod-files-secure.s3.us-west-2.amazonaws.com/04710ccf-f52a-4b96-970b-dae0fc12890a/4d9f2622-9da4-473e-b273-8d1b8fd07df4/catman.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466SVIA2VAH%2F20260419%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260419T095340Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEDgaCXVzLXdlc3QtMiJHMEUCIQDPWtMxnGnbLtwHJKu8u4zwxhz0ERHJJdkNswmCwnGHrwIgYz0cyEEn9h%2B4mwzLJVnU%2FDpcujOEetJ1KYL4pQ4e7TYq%2FwMIARAAGgw2Mzc0MjMxODM4MDUiDDSKowKP5ChJhgSIKCrcA9nSivAqSD3xOsgJkrx7ckDJESRbZXhxyVPLMysr3FjIpU71Cc9NKaZ4QuMBqsXoaDDJp5qr6Nb%2BLFcZCK8DfwkgfvNc%2BNYBCrJVTK0WL0DIwM5YLuRCUtG44t5ZUoRUuL2cZLfUE6kjLJb1lNH8q6MDYZrBnFAW%2BGaEzp%2FLgRp7onXxyiqympICAtutNLVBlub2ATidj%2F6wFS4pCCt7FOUvqYz0azPo3EEgFOj518tp6ddsFZDAt5I4XRUADslYH%2FieFiA2kJpyC3eY3%2FQbIhSg%2BRJVVCymmLIjsCCcdSNw1dJw31yQwhGi7QiqRGzUa8Z2PyPk7te8VekR4JCzH%2FXzKAV47b6IUuw9mTVcwfN9MJRMl0tf2S3SrzH6zOi0xhBvfqml1mjM3QUDHAFLMH6Cxjego3VRRZLiNDRPNpGPJ2oL%2BxI%2F1KU2KuVNaPo58O0RlwVRnMkus2WxyT5TDwFKNmI%2FVfzf9t%2FWMWLfMd7PouWGSEaIK7ZeBxBW16abONmCKdSe3avzoruL51l3EkCoJ7qf5qDXY41vog0aU9G4wzzhTYjd7hh7MVv7v1g6prZwGnxiBnobAkUV499AAJCtjuXiyaSVMmWbPhyZ31roUmOX9rCtJDagfEdnML%2BWks8GOqUBhehD3XtsJBI3USHHu311C013cKZm7%2F80ptGoao9OfyErpKZZwS5pJpF6uKqqIAW87r41oRfb6FD08YWNFcvNe%2FyN8XfOx8VdkC7d3Xh%2BHZWzaJC2RAzmdXZsb1A8kdNm3JPze7P1KK11GG7r8ejch83CaBVSeoJ91UzFJSOLvgazqIZUDpMUTc8MInBWcG37dntYx5LjTXJh09UnMhcisVRyUT4u&X-Amz-Signature=41a8a6a764bff7428ef8a56fd40ff8d68e1fb51a162308c957d0aedc83d7caa1&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+      ],
       "submittedBy": "tester",
       "status": "Approved",
       "date": "19 Apr 2026"
