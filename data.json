@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-04-19T21:52:43.602Z",
-  "totalEntries": 2,
-  "totalCities": 2,
+  "lastUpdated": "2026-04-19T23:52:13.645Z",
+  "totalEntries": 3,
+  "totalCities": 3,
   "formUrl": "https://spangle-throat-568.notion.site/347468fdd09e807f9bb0d4f3878b7d0a?pvs=105",
   "entries": [
     {
@@ -13,7 +13,7 @@
       "mapLink": "https://maps.app.goo.gl/EFeQcTqkEL4reMhP8",
       "website": "",
       "photos": [
-        "https://prod-files-secure.s3.us-west-2.amazonaws.com/04710ccf-f52a-4b96-970b-dae0fc12890a/33fe4e1b-b742-45fe-8b59-169799b559e1/ss.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466WUIL4ZSV%2F20260419%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260419T215243Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEEMaCXVzLXdlc3QtMiJHMEUCIExRhmTMr80HxgdWXtuVgGOaEMo1L3H54Fq%2BpLEPjKcPAiEAwQ5jAki%2F5UeMXXE8Dc%2FpXtrS2MjVOVYxHgcbYPVoOoQq%2FwMIDBAAGgw2Mzc0MjMxODM4MDUiDMREGmd5wQn3b7Ft6yrcA6TWMGPwqHVxynuvs6eiW2EfjU%2B2rAz88ogsBRMqp9IwTfYSzCrzLT4akB4QKY9qT9VsBIY3KB07dynDdvqFg%2FVA2xlKqt63q%2BqAAwjQwKbrZTkuqHQGMjIiQYQPom1MvG0c2LnyZ1GVCn%2BD6yMGTVxX0ii7w%2FTrQIxd5f9xiH50Tn6KB5%2FnZRTezZMWBFYrfrFrdzYuHg%2BzTgAXAczRHxX8EfcLt07fSHrn7qeezF2oh6PP6wRGWD8wUFBMIehKvp66oJ2uKjtcPZCU8c12H0NgeSp6ddyuQNkCjYgjGFgGariSWltbck255WnxrwupqLe8GZP8ubghA%2B843znEQ8nZb495pHiVGQkKfc4gKqa2bj0K%2BV%2FzrWFDOTGHloxr9lsl6XiXOSawWvNrJj30jQxA1VjQXPEbIojp1U1CLaLgHEJbqRz7Zb9ypPAQzI154RL6WcgTY4gpi18jLiw47xv5cVUb7wzUDeUU%2F6AlDcVknbME2DfZEDI5yTnHzd1h%2FnoBfGj70YK9hHKxWOj5ABiLrst1R4%2BKnl9PPCKbmGUQZm6SQrJ36aY67X%2FJQiWBLfEe9zQd7ysxStOI%2F5WL4oaxXtl%2BDg37N3u25mQRfOuBPn3fuRuugiod6lBBMOLClM8GOqUBnfsDQRQrMBhLYl06EUu2DgjHEazZANrQLZOd0p3K0I5mbcM6ZRQo%2B9v85LAYME6cFmCUmy%2Fyh1ZIjrDeZ5UAOhfyXWyjB%2Bewo3Bub%2B1n%2FR6A061DuNM3qsr%2BxZVmCC%2F8s4qAe2MHgZr3zT4oxSuHnmJiN08LFjOx2tQe6wbzR%2FjKHAmf4ahrNekoRIp1n%2Bt6WUmjhH0Pq1Qgi%2BMpizkFCKZJQ4AH&X-Amz-Signature=4cc734b198bf4d41da5c68cc7d31dd6dc29510214db629afce308f699ed32b18&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+        "https://prod-files-secure.s3.us-west-2.amazonaws.com/04710ccf-f52a-4b96-970b-dae0fc12890a/33fe4e1b-b742-45fe-8b59-169799b559e1/ss.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466TFSUIDDI%2F20260419%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260419T235213Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEEgaCXVzLXdlc3QtMiJHMEUCIEkxJS2nFDUDRAzjhNSEB7LKdHu4fgZsThRHIrGVIUlMAiEAknS78wFTUTEPVVYxrL2eRn7joYE33WU%2B1w0rgPsealQq%2FwMIERAAGgw2Mzc0MjMxODM4MDUiDLn9PyE0iq9xmmF4SyrcA5wmfQU9vTE50nCoJSf1YKJNu5%2BPCwght%2BaEuBGO8yq9UqDLMfegXhgeE9fDNQYPs6FojnM3podsU%2BWhxXJCpjmtlOUMeI8Ir%2FH8ZZCiO6xS290kjkEPsGO%2Bw1VCgck44WNjmXeH8PoMms1VZnCvpROejJtubvVhAr8l5k499m1QyqJkYGYQDtp%2BO%2FycanDWAajH8joCiYvABSRP7vDzcj9OTR60oPuDyB9RfQH6kiOdWhpAVGuqLU6kdoVWFSXztuW8AtL6W9VHGb10ay021HleUgynZzZR4R5i1I36vJlEpbt%2Fgx%2F9pIoWKNSF%2BKFKKvLKkor2YEd6tl9NODn0hXJnm33NRkEa5h2hhzPVerwYd0WBqbjnnWDB2XeJmB8ah3ESdMbPczmmGUpVQ5hPwRleC5nI1Iq%2Fc0q5kNh8NpKSGgbQbD2L5F0cIdzEVtBZecuvjlbmc5a%2F8jwHz5zKZV%2F8j8gSeRot04EXdLRMC687c70PkXE7nCI4G5j2Ay9peWn%2B8%2FhABDW2OMODkVQ%2Foqr11lxVkuRVOGE14gDxiYiXtd%2Bkuy7V%2BAtsc4a23oYvjBHoc8j%2BzWYEIib2uqAm57l%2FmXgdKojoqedUljjIjz7%2B7Qf5HDVUa2yKkvPTMIjOlc8GOqUBw2nOhErSur0u08LSlomiaGeJ4qFkmYwXp4b%2BEj54j6FPSZnPaAKpM4L9EmGLeov%2BFaa%2FrlVd856M9I61%2F0GdQK9l%2FQSh2TGrYRBOyeYT9jHwdfV5B5PaByPScXF8f6EC1sZrUwb3Poj2Z50CL%2F389qQDnashhTS2w6ZHvi%2FirhdA%2Bj%2FM6vamk2ZDP50gNIkRY8XrFIMtMcpuHqBZz0L7vByk%2FaAL&X-Amz-Signature=eebd9a57d07b0180f81248176e5bd5e6bde65ed979f3808ea248478a18a4c68b&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
       ],
       "submittedBy": "Phoebe",
       "status": "Approved",
@@ -29,6 +29,19 @@
       "website": "",
       "photos": [],
       "submittedBy": "",
+      "status": "Approved",
+      "date": "19 Apr 2026"
+    },
+    {
+      "id": "347468fd-d09e-81be-a977-f02211fc0499",
+      "title": "anneka",
+      "city": "tsuruga",
+      "category": "Museum",
+      "description": "port of humanity tsuruga museum - museums related to jewish refugees in ww2 because tsuruga used to be a port city that connected japan to europe through russia and a lot of jewish people fled to japan in ww2",
+      "mapLink": "https://maps.app.goo.gl/1eXxFWTpxDP3dNfo8",
+      "website": "",
+      "photos": [],
+      "submittedBy": "anneka",
       "status": "Approved",
       "date": "19 Apr 2026"
     }
