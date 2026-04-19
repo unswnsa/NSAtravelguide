@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-04-19T09:42:49.030Z",
+  "lastUpdated": "2026-04-19T09:45:10.490Z",
   "formUrl": "https://spangle-throat-568.notion.site/347468fdd09e807f9bb0d4f3878b7d0a?pvs=105",
-  "totalEntries": 2,
+  "totalEntries": 3,
   "entries": [
     {
       "id": "347468fd-d09e-80ac-b355-fc2a9f96aa60",
@@ -22,6 +22,17 @@
       "description": "Stunning golden pavilion set in a serene zen garden with reflecting pond, one of Japan's most iconic landmarks showcasing traditional architecture",
       "link": "",
       "submittedBy": "",
+      "status": "Approved",
+      "date": "19 Apr 2026"
+    },
+    {
+      "id": "347468fd-d09e-8192-8506-e759129fe063",
+      "title": "test",
+      "city": "test",
+      "category": "Accommodation",
+      "description": "test",
+      "link": "",
+      "submittedBy": "tester",
       "status": "Approved",
       "date": "19 Apr 2026"
     }
