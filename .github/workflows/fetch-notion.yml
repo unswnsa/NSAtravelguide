@@ -2,26 +2,23 @@ name: Sync Notion to Travel Guide
 
 on:
   schedule:
-    # Runs every hour — change to your preferred frequency
     - cron: '0 * * * *'
-  workflow_dispatch: # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
   push:
     branches: [main]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required to commit data.json back to the repo
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
 
       - name: Fetch from Notion and build data.json
         env:
@@ -38,11 +35,14 @@ jobs:
           const FORM_URL = process.env.NOTION_FORM_URL || '';
 
           if (!TOKEN || !DB_ID) {
-            console.error('❌ Missing NOTION_TOKEN or NOTION_DATABASE_ID secrets.');
+            console.error('ERROR: Missing NOTION_TOKEN or NOTION_DATABASE_ID secrets.');
+            console.error('TOKEN set:', !!TOKEN, '| DB_ID set:', !!DB_ID);
             process.exit(1);
           }
 
-          // Helper: HTTPS POST to Notion API
+          console.log('Token present:', TOKEN.slice(0,8) + '...');
+          console.log('Database ID:', DB_ID);
+
           function notionPost(path, body) {
             return new Promise((resolve, reject) => {
               const data = JSON.stringify(body);
@@ -51,18 +51,22 @@ jobs:
                 path,
                 method: 'POST',
                 headers: {
-                  'Authorization': `Bearer ${TOKEN}`,
+                  'Authorization': 'Bearer ' + TOKEN,
                   'Notion-Version': '2022-06-28',
                   'Content-Type': 'application/json',
                   'Content-Length': Buffer.byteLength(data),
                 }
               };
               const req = https.request(options, (res) => {
-                let body = '';
-                res.on('data', chunk => body += chunk);
+                let raw = '';
+                res.on('data', chunk => raw += chunk);
                 res.on('end', () => {
-                  try { resolve(JSON.parse(body)); }
-                  catch (e) { reject(new Error('Invalid JSON: ' + body)); }
+                  console.log('HTTP status:', res.statusCode);
+                  try {
+                    resolve({ status: res.statusCode, body: JSON.parse(raw) });
+                  } catch (e) {
+                    reject(new Error('Invalid JSON: ' + raw.slice(0, 300)));
+                  }
                 });
               });
               req.on('error', reject);
@@ -71,81 +75,125 @@ jobs:
             });
           }
 
-          // Helper: extract text from a Notion rich_text or title property
           function getText(prop) {
             if (!prop) return '';
-            if (prop.type === 'title') return prop.title?.map(t => t.plain_text).join('') || '';
-            if (prop.type === 'rich_text') return prop.rich_text?.map(t => t.plain_text).join('') || '';
-            if (prop.type === 'select') return prop.select?.name || '';
-            if (prop.type === 'multi_select') return prop.multi_select?.map(s => s.name).join(', ') || '';
-            if (prop.type === 'url') return prop.url || '';
-            if (prop.type === 'email') return prop.email || '';
-            if (prop.type === 'date') return prop.date?.start || '';
-            if (prop.type === 'checkbox') return prop.checkbox ? 'Yes' : 'No';
+            const t = prop.type;
+            if (t === 'title')        return (prop.title || []).map(x => x.plain_text).join('');
+            if (t === 'rich_text')    return (prop.rich_text || []).map(x => x.plain_text).join('');
+            if (t === 'select')       return prop.select ? prop.select.name : '';
+            if (t === 'multi_select') return (prop.multi_select || []).map(x => x.name).join(', ');
+            if (t === 'status')       return prop.status ? prop.status.name : '';
+            if (t === 'url')          return prop.url || '';
+            if (t === 'email')        return prop.email || '';
+            if (t === 'date')         return prop.date ? prop.date.start : '';
+            if (t === 'checkbox')     return prop.checkbox ? 'Yes' : 'No';
+            if (t === 'phone_number') return prop.phone_number || '';
             return '';
           }
 
-          async function fetchAllPages() {
-            let results = [];
-            let cursor = undefined;
+          async function queryDatabase(filterBody) {
+            try {
+              const { status, body } = await notionPost('/v1/databases/' + DB_ID + '/query', filterBody);
+              if (body.object === 'error') {
+                console.warn('Filter failed (' + status + '):', body.message);
+                return null;
+              }
+              return body;
+            } catch (e) {
+              console.warn('Query error:', e.message);
+              return null;
+            }
+          }
 
-            do {
-              const body = {
-                filter: {
-                  property: 'Status',
-                  status: { equals: 'Approved' }
-                  // If your Status field is a Select (not Status type), use:
-                  // select: { equals: 'Approved' }
-                },
+          async function fetchAllApproved() {
+            let results = [];
+
+            // Attempt 1: Notion Status type
+            console.log('\nAttempt 1: Status type filter...');
+            let res = await queryDatabase({
+              filter: { property: 'Status', status: { equals: 'Approved' } },
+              sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+              page_size: 100
+            });
+
+            // Attempt 2: Select type
+            if (!res) {
+              console.log('Attempt 2: Select type filter...');
+              res = await queryDatabase({
+                filter: { property: 'Status', select: { equals: 'Approved' } },
                 sorts: [{ timestamp: 'created_time', direction: 'descending' }],
                 page_size: 100
-              };
-              if (cursor) body.start_cursor = cursor;
+              });
+            }
 
-              const res = await notionPost(`/v1/databases/${DB_ID}/query`, body);
+            // Attempt 3: No filter — fetch all for diagnostics
+            if (!res) {
+              console.log('Attempt 3: No filter (fetching all for diagnostics)...');
+              res = await queryDatabase({
+                sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+                page_size: 10
+              });
 
-              if (res.object === 'error') {
-                // Fallback: try select filter if status type failed
-                console.warn('Status filter failed, trying select filter...');
-                const fallback = await notionPost(`/v1/databases/${DB_ID}/query`, {
-                  filter: {
-                    property: 'Status',
-                    select: { equals: 'Approved' }
-                  },
-                  sorts: [{ timestamp: 'created_time', direction: 'descending' }],
-                  page_size: 100
+              if (res && res.results.length > 0) {
+                console.log('\nPROPERTY NAMES AND TYPES in this database:');
+                const props = res.results[0].properties;
+                Object.entries(props).forEach(function(entry) {
+                  console.log('  "' + entry[0] + '" -> type: ' + entry[1].type + ' | value: ' + (getText(entry[1]) || '[empty]'));
                 });
-                if (fallback.object === 'error') {
-                  console.error('❌ Notion API error:', fallback.message);
-                  process.exit(1);
-                }
-                results = results.concat(fallback.results || []);
-                break;
+                console.log('\nWriting all entries unfiltered so site shows something.');
+                return res.results;
+              } else if (res) {
+                console.log('Database exists but has no entries yet.');
+                return [];
+              } else {
+                console.error('All query attempts failed. Check NOTION_DATABASE_ID and that the integration is connected to the database (Connections menu in Notion).');
+                process.exit(1);
               }
+            }
 
-              results = results.concat(res.results || []);
-              cursor = res.has_more ? res.next_cursor : undefined;
-            } while (cursor);
+            // Paginate
+            results = res.results;
+            let cursor = res.has_more ? res.next_cursor : null;
+            while (cursor) {
+              const page = await queryDatabase({
+                filter: { property: 'Status', status: { equals: 'Approved' } },
+                sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+                page_size: 100,
+                start_cursor: cursor
+              });
+              if (!page) break;
+              results = results.concat(page.results);
+              cursor = page.has_more ? page.next_cursor : null;
+            }
 
             return results;
           }
 
-          (async () => {
-            console.log('📡 Fetching approved entries from Notion...');
-            const pages = await fetchAllPages();
-            console.log(`✅ Found ${pages.length} approved entries`);
+          (async function() {
+            console.log('Starting Notion sync...\n');
 
-            const entries = pages.map(page => {
+            const pages = await fetchAllApproved();
+            console.log('\nProcessing ' + pages.length + ' entries');
+
+            const entries = pages.map(function(page, idx) {
               const p = page.properties;
+              if (idx === 0) {
+                console.log('\nProperty names found: ' + Object.keys(p).join(', '));
+              }
+              // Find the title field automatically as fallback
+              const titleField = Object.values(p).find(function(v) { return v.type === 'title'; });
               return {
                 id: page.id,
-                title: getText(p['Name'] || p['Title'] || p['Place Name'] || p['Recommendation']),
-                city: getText(p['City'] || p['Location'] || p['Region']),
-                category: getText(p['Category'] || p['Type']),
-                description: getText(p['Description'] || p['Tip'] || p['Details'] || p['Notes']),
-                link: getText(p['Link'] || p['URL'] || p['Maps Link'] || p['Google Maps']),
-                submittedBy: getText(p['Submitted By'] || p['Name'] || p['Member']),
-                date: page.created_time ? new Date(page.created_time).toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' }) : '',
+                title:       getText(p['Name'] || p['Title'] || p['Place Name'] || p['Recommendation'] || p['place name'] || titleField),
+                city:        getText(p['City'] || p['Location'] || p['Region'] || p['city']),
+                category:    getText(p['Category'] || p['Type'] || p['category']),
+                description: getText(p['Description'] || p['Tip'] || p['Details'] || p['Notes'] || p['description']),
+                link:        getText(p['Link'] || p['URL'] || p['Maps Link'] || p['Google Maps'] || p['url']),
+                submittedBy: getText(p['Submitted By'] || p['Submitted by'] || p['Member'] || p['Your Name'] || p['member']),
+                status:      getText(p['Status'] || p['status']),
+                date: page.created_time
+                  ? new Date(page.created_time).toLocaleDateString('en-AU', { year: 'numeric', month: 'short', day: 'numeric' })
+                  : '',
               };
             });
 
@@ -153,24 +201,30 @@ jobs:
               lastUpdated: new Date().toISOString(),
               formUrl: FORM_URL,
               totalEntries: entries.length,
-              entries
+              entries: entries
             };
 
             fs.writeFileSync('data.json', JSON.stringify(output, null, 2));
-            console.log('💾 data.json written successfully');
-            console.log('📊 Summary:', entries.length, 'entries from', new Set(entries.map(e => e.city).filter(Boolean)).size, 'cities');
+            console.log('\ndata.json written with ' + entries.length + ' entries');
+            const cities = new Set(entries.map(function(e) { return e.city; }).filter(Boolean));
+            console.log('Cities: ' + ([...cities].join(', ') || '(none yet)'));
+            console.log('\nDone!');
           })();
           EOF
+
+      - name: Show data.json preview
+        run: |
+          echo "=== data.json (first 60 lines) ==="
+          head -60 data.json || echo "data.json not found"
 
       - name: Commit and push data.json
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data.json
-          # Only commit if there are changes
           if git diff --staged --quiet; then
-            echo "✅ No changes to data.json — skipping commit"
+            echo "No changes to data.json — skipping commit"
           else
-            git commit -m "chore: sync Notion travel guide entries [$(date -u '+%Y-%m-%d %H:%M')] [skip ci]"
+            git commit -m "chore: sync Notion entries [$(date -u '+%Y-%m-%d %H:%M')] [skip ci]"
             git push
           fi
