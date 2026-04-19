@@ -7,10 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
+<!-- Leaflet for interactive maps -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
   :root {
     --red: #C8392B;
-    --red-dark: #9e2d21;
     --cream: #FAF8F3;
     --dark: #1A1A18;
     --mid: #4a4a45;
@@ -23,328 +25,178 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--cream); color: var(--dark); font-size: 16px; line-height: 1.7; }
 
-  body {
-    font-family: var(--font-body);
-    background: var(--cream);
-    color: var(--dark);
-    font-size: 16px;
-    line-height: 1.7;
-  }
-
-  /* ── NAV ── */
+  /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(250,248,243,0.94);
-    backdrop-filter: blur(12px);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    background: rgba(250,248,243,0.94); backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2.5rem;
-    height: 60px;
+    padding: 0 2.5rem; height: 60px;
   }
-  .nav-logo {
-    font-family: var(--font-jp); font-size: 1.05rem; font-weight: 400;
-    color: var(--dark); text-decoration: none; letter-spacing: 0.02em;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .nav-logo-kanji {
-    width: 34px; height: 34px; background: var(--dark); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem; border-radius: 4px;
-  }
+  .nav-logo { font-family: var(--font-jp); font-size: 1.05rem; color: var(--dark); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+  .nav-logo-kanji { width: 34px; height: 34px; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border-radius: 4px; }
   .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a {
-    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--mid); text-decoration: none; font-weight: 500;
-    transition: color 0.2s;
-  }
+  .nav-links a { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); text-decoration: none; font-weight: 500; transition: color 0.2s; }
   .nav-links a:hover { color: var(--red); }
-  .nav-cta {
-    font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
-    background: var(--dark); color: #fff; padding: 8px 18px;
-    border-radius: 3px; text-decoration: none; font-weight: 500;
-    transition: background 0.2s;
-  }
+  .nav-cta { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--dark); color: #fff; padding: 8px 18px; border-radius: 3px; text-decoration: none; font-weight: 500; transition: background 0.2s; }
   .nav-cta:hover { background: var(--red); }
 
-  /* ── HERO ── */
-  .hero {
-    padding-top: 60px;
-    min-height: 88vh;
-    display: grid; grid-template-columns: 1fr 1fr;
-    position: relative; overflow: hidden;
-  }
-  .hero-left {
-    padding: 8rem 4rem 5rem 5rem;
-    display: flex; flex-direction: column; justify-content: center;
-  }
-  .hero-tag {
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--red); font-weight: 500; margin-bottom: 1.5rem;
-  }
-  .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 5vw, 4.8rem);
-    font-weight: 500; line-height: 1.1;
-    margin-bottom: 1.5rem; color: var(--dark);
-  }
+  /* HERO */
+  .hero { padding-top: 60px; min-height: 88vh; display: grid; grid-template-columns: 1fr 1fr; }
+  .hero-left { padding: 8rem 4rem 5rem 5rem; display: flex; flex-direction: column; justify-content: center; }
+  .hero-tag { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); font-weight: 500; margin-bottom: 1.5rem; }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(3rem,5vw,4.8rem); font-weight: 500; line-height: 1.1; margin-bottom: 1.5rem; }
   .hero h1 em { font-style: italic; color: var(--red); }
-  .hero-sub {
-    font-size: 1rem; color: var(--mid); max-width: 420px;
-    margin-bottom: 2.5rem; font-weight: 300; line-height: 1.8;
-  }
+  .hero-sub { font-size: 1rem; color: var(--mid); max-width: 420px; margin-bottom: 2.5rem; font-weight: 300; line-height: 1.8; }
   .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--dark); color: #fff;
-    padding: 12px 28px; border-radius: 3px;
-    text-decoration: none; font-size: 0.85rem;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    font-weight: 500; transition: background 0.2s;
-    font-family: var(--font-body);
-    border: none; cursor: pointer;
-  }
+  .btn-primary { background: var(--dark); color: #fff; padding: 12px 28px; border-radius: 3px; text-decoration: none; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; transition: background 0.2s; border: none; cursor: pointer; font-family: var(--font-body); }
   .btn-primary:hover { background: var(--red); }
-  .btn-ghost {
-    border: 1.5px solid var(--dark); color: var(--dark);
-    padding: 12px 28px; border-radius: 3px;
-    text-decoration: none; font-size: 0.85rem;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    font-weight: 500; transition: all 0.2s;
-    font-family: var(--font-body);
-  }
+  .btn-ghost { border: 1.5px solid var(--dark); color: var(--dark); padding: 12px 28px; border-radius: 3px; text-decoration: none; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; transition: all 0.2s; }
   .btn-ghost:hover { border-color: var(--red); color: var(--red); }
-  .hero-stats {
-    display: flex; gap: 2.5rem; margin-top: 3.5rem;
-    border-top: 1px solid var(--border); padding-top: 2rem;
-  }
-  .stat-num {
-    font-family: var(--font-display); font-size: 2rem;
-    font-weight: 600; color: var(--dark);
-  }
+  .hero-stats { display: flex; gap: 2.5rem; margin-top: 3.5rem; border-top: 1px solid var(--border); padding-top: 2rem; }
+  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; }
   .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-
-  .hero-right {
-    background: var(--dark);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-  .hero-jp-text {
-    font-family: var(--font-jp);
-    font-size: clamp(5rem, 14vw, 11rem);
-    color: rgba(255,255,255,0.06);
-    font-weight: 300; line-height: 1;
-    position: absolute; user-select: none;
-  }
-  .hero-badge {
-    position: relative; z-index: 1;
-    border: 1.5px solid rgba(255,255,255,0.2);
-    border-radius: 4px; padding: 2.5rem;
-    text-align: center; max-width: 280px;
-  }
-  .hero-badge-kanji {
-    font-family: var(--font-jp); font-size: 4rem;
-    color: #fff; line-height: 1; margin-bottom: 1rem;
-    display: block;
-  }
+  .hero-right { background: var(--dark); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .hero-jp-text { font-family: var(--font-jp); font-size: clamp(5rem,14vw,11rem); color: rgba(255,255,255,0.06); font-weight: 300; position: absolute; user-select: none; }
+  .hero-badge { position: relative; z-index: 1; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2.5rem; text-align: center; max-width: 280px; }
+  .hero-badge-kanji { font-family: var(--font-jp); font-size: 4rem; color: #fff; line-height: 1; margin-bottom: 1rem; display: block; }
   .hero-badge p { color: rgba(255,255,255,0.65); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
   .hero-badge strong { color: #fff; display: block; font-family: var(--font-display); font-size: 1.1rem; font-weight: 400; margin-top: 0.3rem; }
 
-  /* ── SECTION WRAPPER ── */
-  section { padding: 6rem 5rem; }
-  .section-tag {
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--red); font-weight: 500; margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 500; line-height: 1.2; margin-bottom: 1.2rem;
-  }
+  /* HOW IT WORKS */
+  #how { background: var(--dark); color: #fff; padding: 6rem 5rem; }
+  .section-tag { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); font-weight: 500; margin-bottom: 0.75rem; }
+  .section-title { font-family: var(--font-display); font-size: clamp(2rem,4vw,3rem); font-weight: 500; line-height: 1.2; margin-bottom: 1.2rem; }
   .section-title em { font-style: italic; color: var(--red); }
   .section-sub { font-size: 0.95rem; color: var(--mid); max-width: 560px; font-weight: 300; line-height: 1.8; }
-
-  /* ── HOW IT WORKS ── */
-  #how { background: var(--dark); color: #fff; padding: 6rem 5rem; }
   #how .section-title { color: #fff; }
   #how .section-sub { color: rgba(255,255,255,0.55); }
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4rem; }
-  .step {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-    padding: 2.5rem 2rem;
-  }
-  .step-num {
-    font-family: var(--font-display); font-size: 3.5rem;
-    color: rgba(255,255,255,0.12); font-weight: 600; line-height: 1;
-    margin-bottom: 1.5rem;
-  }
-  .step h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.6rem; letter-spacing: 0.02em; }
+  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 4rem; }
+  .step { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 2.5rem 2rem; }
+  .step-num { font-family: var(--font-display); font-size: 3.5rem; color: rgba(255,255,255,0.12); font-weight: 600; line-height: 1; margin-bottom: 1.5rem; }
+  .step h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.6rem; }
   .step p { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.75; }
   .step-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
 
-  /* ── FILTERS ── */
-  .filters {
-    display: flex; gap: 0.6rem; flex-wrap: wrap;
-    margin-bottom: 3rem;
-  }
-  .filter-btn {
-    font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase;
-    border: 1.5px solid var(--border); background: transparent;
-    color: var(--mid); padding: 7px 16px; border-radius: 2px;
-    cursor: pointer; font-family: var(--font-body); font-weight: 500;
-    transition: all 0.15s;
-  }
+  /* GUIDE SECTION */
+  #guide { padding: 6rem 5rem; }
+  .guide-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; }
+  .search-wrap { position: relative; width: 320px; }
+  .search-wrap input { width: 100%; padding: 11px 16px 11px 40px; border: 1.5px solid var(--border); border-radius: 3px; font-family: var(--font-body); font-size: 0.9rem; background: #fff; color: var(--dark); outline: none; transition: border-color 0.2s; }
+  .search-wrap input:focus { border-color: var(--dark); }
+  .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .filters { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .filter-btn { font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; border: 1.5px solid var(--border); background: transparent; color: var(--mid); padding: 7px 16px; border-radius: 2px; cursor: pointer; font-family: var(--font-body); font-weight: 500; transition: all 0.15s; }
   .filter-btn:hover { border-color: var(--dark); background: var(--dark); color: #fff; }
   .filter-btn.active { border-color: var(--red); background: var(--red); color: #fff; }
-
-  /* ── SEARCH ── */
-  .search-wrap { margin-bottom: 1.5rem; position: relative; max-width: 480px; }
-  .search-wrap input {
-    width: 100%; padding: 12px 16px 12px 42px;
-    border: 1.5px solid var(--border); border-radius: 3px;
-    font-family: var(--font-body); font-size: 0.9rem;
-    background: #fff; color: var(--dark);
-    outline: none; transition: border-color 0.2s;
-  }
-  .search-wrap input:focus { border-color: var(--dark); }
-  .search-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--muted); font-size: 0.9rem;
-  }
-
-  /* ── GUIDE GRID ── */
-  .guide-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem; }
+  .guide-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
   .result-count { font-size: 0.82rem; color: var(--muted); }
 
-  #guide-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5px;
-    background: var(--border);
-    border: 1.5px solid var(--border);
-  }
-  .guide-card {
-    background: var(--card-bg); padding: 1.8rem;
-    transition: background 0.15s;
-    display: flex; flex-direction: column; gap: 0.75rem;
-  }
-  .guide-card:hover { background: #fdfaf5; }
-  .card-meta {
-    display: flex; align-items: center; gap: 0.6rem;
-    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); font-weight: 500;
-  }
-  .card-category {
-    padding: 3px 9px; border-radius: 2px;
-    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
-    background: var(--cat-color, var(--dark)); color: #fff;
-  }
+  /* GRID */
+  #guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5px; background: var(--border); border: 1.5px solid var(--border); }
 
-  .card-title {
-    font-family: var(--font-display); font-size: 1.3rem;
-    font-weight: 500; line-height: 1.3; color: var(--dark);
-  }
-  .card-city {
-    font-size: 0.8rem; color: var(--muted);
-    display: flex; align-items: center; gap: 4px;
-  }
+  /* CARD */
+  .guide-card { background: var(--card-bg); display: flex; flex-direction: column; }
+
+  /* PHOTO GALLERY */
+  .card-gallery { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; background: #f0ece4; }
+  .card-gallery img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s; }
+  .card-gallery img.active { opacity: 1; }
+  .gallery-nav { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 2; }
+  .gallery-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.2s; border: none; padding: 0; }
+  .gallery-dot.active { background: #fff; }
+  .gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.35); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 2; transition: background 0.15s; }
+  .gallery-arrow:hover { background: rgba(0,0,0,0.6); }
+  .gallery-prev { left: 10px; }
+  .gallery-next { right: 10px; }
+  .card-gallery.no-photos { display: flex; align-items: center; justify-content: center; }
+  .card-gallery.no-photos .no-photo-label { font-family: var(--font-jp); font-size: 2rem; color: rgba(0,0,0,0.12); user-select: none; }
+
+  /* MAP */
+  .card-map-wrap { position: relative; width: 100%; height: 200px; border-top: 1.5px solid var(--border); }
+  .card-map { width: 100%; height: 100%; }
+  .map-open-btn { position: absolute; top: 8px; right: 8px; z-index: 400; background: #fff; border: 1px solid var(--border); border-radius: 3px; padding: 4px 10px; font-size: 0.72rem; font-family: var(--font-body); color: var(--dark); text-decoration: none; letter-spacing: 0.04em; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .map-open-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+  /* CARD BODY */
+  .card-body { padding: 1.6rem; display: flex; flex-direction: column; gap: 0.65rem; flex: 1; }
+  .card-meta { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .card-category { padding: 3px 9px; border-radius: 2px; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: #fff; }
+  .card-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; line-height: 1.25; color: var(--dark); }
+  .card-city { font-size: 0.8rem; color: var(--muted); }
   .card-desc { font-size: 0.88rem; color: var(--mid); line-height: 1.75; font-weight: 300; }
-  .card-footer {
-    margin-top: auto; padding-top: 0.75rem;
-    border-top: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.75rem; color: var(--muted);
-  }
+  .card-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.25rem; }
+  .card-link { font-size: 0.78rem; color: var(--red); text-decoration: none; letter-spacing: 0.03em; display: inline-flex; align-items: center; gap: 4px; }
+  .card-link:hover { text-decoration: underline; }
+  .card-footer { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
   .card-author { display: flex; align-items: center; gap: 6px; }
-  .author-dot {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--dark); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.6rem; font-weight: 500; flex-shrink: 0;
-  }
+  .author-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 500; flex-shrink: 0; }
 
-  /* ── LOADING / EMPTY / ERROR ── */
-  .state-message {
-    grid-column: 1 / -1;
-    padding: 5rem 2rem; text-align: center;
-    background: var(--card-bg);
-  }
-  .state-message .state-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  /* STATES */
+  .state-message { grid-column: 1/-1; padding: 5rem 2rem; text-align: center; background: var(--card-bg); }
+  .state-icon { font-size: 2.5rem; margin-bottom: 1rem; }
   .state-message h3 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 0.5rem; }
   .state-message p { color: var(--muted); font-size: 0.9rem; }
   .loading-dots { display: flex; gap: 6px; justify-content: center; margin-top: 1rem; }
-  .loading-dots span {
-    width: 8px; height: 8px; border-radius: 50%; background: var(--muted);
-    animation: pulse 1.2s infinite;
-  }
+  .loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); animation: pulse 1.2s infinite; }
   .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes pulse { 0%,80%,100%{opacity:0.3} 40%{opacity:1} }
 
-  /* ── SUBMIT BANNER ── */
-  .submit-banner {
-    background: var(--dark); color: #fff;
-    padding: 5rem 5rem;
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 3rem; align-items: center;
-  }
-  .submit-banner h2 {
-    font-family: var(--font-display); font-size: clamp(1.8rem,3vw,2.8rem);
-    font-weight: 500; margin-bottom: 0.75rem;
-  }
+  /* SUBMIT */
+  .submit-banner { background: var(--dark); color: #fff; padding: 5rem; display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; }
+  .submit-banner h2 { font-family: var(--font-display); font-size: clamp(1.8rem,3vw,2.8rem); font-weight: 500; margin-bottom: 0.75rem; }
   .submit-banner h2 em { font-style: italic; color: #e87a6b; }
-  .submit-banner p { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.8; font-weight: 300; }
-  .submit-banner a.btn-primary { background: var(--red); font-size: 0.85rem; }
-  .submit-banner a.btn-primary:hover { background: #e04030; }
+  .submit-banner p { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.8; font-weight: 300; margin-bottom: 1.5rem; }
   .submit-note { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.75rem; }
-  .banner-kanji { font-family: var(--font-jp); font-size: 5rem; color: rgba(255,255,255,0.07); font-weight: 300; user-select: none; white-space: nowrap; }
+  .banner-kanji { font-family: var(--font-jp); font-size: 5rem; color: rgba(255,255,255,0.07); font-weight: 300; user-select: none; }
 
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 3rem 5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1.5rem;
-  }
+  /* NOTION FIELDS GUIDE */
+  .fields-guide { background: #fff; border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem 1.75rem; margin-top: 1.5rem; }
+  .fields-guide h4 { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; font-weight: 500; }
+  .field-row { display: flex; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; align-items: baseline; }
+  .field-row:last-child { border-bottom: none; }
+  .field-name { font-weight: 500; color: var(--dark); min-width: 130px; font-family: monospace; font-size: 0.78rem; background: #f5f3ee; padding: 2px 6px; border-radius: 3px; }
+  .field-desc { color: var(--mid); }
+  .field-type { color: var(--muted); font-size: 0.72rem; margin-left: auto; white-space: nowrap; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 3rem 5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
   .footer-brand { display: flex; align-items: center; gap: 10px; }
-  .footer-brand .kanji-badge {
-    width: 30px; height: 30px; background: var(--dark); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.78rem; font-family: var(--font-jp); border-radius: 3px;
-  }
+  .footer-kanji { width: 30px; height: 30px; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-family: var(--font-jp); border-radius: 3px; }
   .footer-text { font-size: 0.8rem; color: var(--muted); }
   .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a {
-    font-size: 0.78rem; color: var(--muted); text-decoration: none;
-    text-transform: uppercase; letter-spacing: 0.07em;
-    transition: color 0.2s;
-  }
+  .footer-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.07em; transition: color 0.2s; }
   .footer-links a:hover { color: var(--red); }
 
-  /* ── RESPONSIVE ── */
+  /* RESPONSIVE */
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; min-height: auto; }
-    .hero-right { min-height: 280px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 260px; }
     .hero-left { padding: 6rem 2rem 3rem; }
-    section { padding: 4rem 2rem; }
-    .steps { grid-template-columns: 1fr; gap: 2px; }
-    .submit-banner { grid-template-columns: 1fr; padding: 3rem 2rem; }
+    #guide { padding: 4rem 1.5rem; }
+    #how { padding: 4rem 1.5rem; }
+    .steps { grid-template-columns: 1fr; }
+    .submit-banner { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
     .banner-kanji { display: none; }
-    footer { padding: 2.5rem 2rem; flex-direction: column; align-items: flex-start; }
+    footer { padding: 2.5rem 1.5rem; flex-direction: column; align-items: flex-start; }
     nav { padding: 0 1.5rem; }
     .nav-links { display: none; }
-    #how { padding: 4rem 2rem; }
+    #guide-grid { grid-template-columns: 1fr; }
+    .search-wrap { width: 100%; }
+    .guide-top { flex-direction: column; align-items: flex-start; }
   }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   .hero-left > * { animation: fadeUp 0.6s both; }
-  .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
-  .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
-  .hero-left > *:nth-child(3) { animation-delay: 0.3s; }
-  .hero-left > *:nth-child(4) { animation-delay: 0.4s; }
-  .hero-left > *:nth-child(5) { animation-delay: 0.5s; }
+  .hero-left > *:nth-child(1){animation-delay:.1s}
+  .hero-left > *:nth-child(2){animation-delay:.2s}
+  .hero-left > *:nth-child(3){animation-delay:.3s}
+  .hero-left > *:nth-child(4){animation-delay:.4s}
+  .hero-left > *:nth-child(5){animation-delay:.5s}
 </style>
 </head>
 <body>
@@ -352,8 +204,7 @@
 <!-- NAV -->
 <nav>
   <a href="https://unswnsa.github.io/NipponStudentAssociation/" class="nav-logo">
-    <span class="nav-logo-kanji">日</span>
-    NSA UNSW
+    <span class="nav-logo-kanji">日</span>NSA UNSW
   </a>
   <ul class="nav-links">
     <li><a href="https://unswnsa.github.io/NipponStudentAssociation/#about">About</a></li>
@@ -369,24 +220,15 @@
   <div class="hero-left">
     <p class="hero-tag">NSA UNSW × Community Guide</p>
     <h1>Japan, through<br>our <em>members'</em><br>eyes.</h1>
-    <p class="hero-sub">Real recommendations from NSA members who've been there. Updated as our community grows — every ramen spot, hidden shrine, and late-night izakaya.</p>
+    <p class="hero-sub">Real recommendations from NSA members who've been there — photos, maps, and all. Updated automatically as our community grows.</p>
     <div class="hero-actions">
       <a href="#guide" class="btn-primary">Browse the guide →</a>
       <a href="#submit" class="btn-ghost">Submit a tip</a>
     </div>
     <div class="hero-stats">
-      <div>
-        <div class="stat-num" id="stat-entries">—</div>
-        <div class="stat-label">Community tips</div>
-      </div>
-      <div>
-        <div class="stat-num" id="stat-cities">—</div>
-        <div class="stat-label">Cities covered</div>
-      </div>
-      <div>
-        <div class="stat-num">500+</div>
-        <div class="stat-label">NSA members</div>
-      </div>
+      <div><div class="stat-num" id="stat-entries">—</div><div class="stat-label">Community tips</div></div>
+      <div><div class="stat-num" id="stat-cities">—</div><div class="stat-label">Cities covered</div></div>
+      <div><div class="stat-num">500+</div><div class="stat-label">NSA members</div></div>
     </div>
   </div>
   <div class="hero-right">
@@ -402,51 +244,48 @@
 <!-- HOW IT WORKS -->
 <div id="how">
   <p class="section-tag">How it works</p>
-  <h2 class="section-title" style="color:#fff">A living guide that grows<br><em>with our community</em></h2>
-  <p class="section-sub">Entries are submitted by NSA members, approved by our team, and automatically synced to this page — no manual updates needed.</p>
+  <h2 class="section-title">A living guide that grows<br><em>with our community</em></h2>
+  <p class="section-sub">Members submit tips via Notion, we approve them, and they appear here automatically — with photos and an interactive map.</p>
   <div class="steps">
     <div class="step">
       <span class="step-icon">📝</span>
       <div class="step-num">01</div>
       <h3>Submit your tip</h3>
-      <p>Fill in our Notion form with your recommendation — place name, city, category, and what makes it special.</p>
+      <p>Fill in our form with the place name, city, category, your description, up to 3 photo URLs, and a Google Maps link.</p>
     </div>
     <div class="step">
       <span class="step-icon">✅</span>
       <div class="step-num">02</div>
       <h3>We review it</h3>
-      <p>Our team checks each entry and marks it as approved in our Notion database. Usually within a day or two.</p>
+      <p>Our team checks each entry in Notion and marks it as Approved. Usually within a day or two.</p>
     </div>
     <div class="step">
       <span class="step-icon">🗾</span>
       <div class="step-num">03</div>
       <h3>It goes live here</h3>
-      <p>A GitHub Action syncs approved entries automatically. Your tip appears on this page within the hour.</p>
+      <p>A GitHub Action syncs approved entries every hour. Your photos and map pin appear on this page automatically.</p>
     </div>
   </div>
 </div>
 
 <!-- GUIDE -->
 <section id="guide">
-  <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem;">
+  <div class="guide-top">
     <div>
       <p class="section-tag">Community guide</p>
       <h2 class="section-title" style="margin-bottom:0">Member-approved<br><em>recommendations</em></h2>
     </div>
-    <div class="search-wrap" style="margin:0">
+    <div class="search-wrap">
       <span class="search-icon">⌕</span>
       <input type="text" id="search-input" placeholder="Search places, cities…" oninput="renderCards()"/>
     </div>
   </div>
-
   <div class="filters" id="filter-bar">
-    <button class="filter-btn active" data-cat="all" onclick="setFilter('all', this)">All</button>
+    <button class="filter-btn active" data-cat="all" onclick="setFilter('all',this)">All</button>
   </div>
-
-  <div class="guide-header">
+  <div class="guide-meta">
     <span class="result-count" id="result-count"></span>
   </div>
-
   <div id="guide-grid">
     <div class="state-message">
       <div class="state-icon">🗾</div>
@@ -461,9 +300,22 @@
 <div class="submit-banner" id="submit">
   <div>
     <h2>Been to Japan?<br><em>Share your finds.</em></h2>
-    <p>Hidden ramen joints, perfect convenience store hacks, the shrine nobody else visits — submit your tip and help the next NSA member have a better trip.</p>
+    <p>Hidden ramen joints, the shrine nobody else visits, a cafe with the perfect matcha — submit your tip with photos and a map link. Help the next NSA member have a better trip.</p>
     <a href="https://www.notion.so" target="_blank" class="btn-primary" id="submit-link">Submit a tip →</a>
     <p class="submit-note">Entries are reviewed before going live. NSA members only.</p>
+
+    <div class="fields-guide">
+      <h4>Fields to fill in your submission</h4>
+      <div class="field-row"><span class="field-name">Name</span><span class="field-desc">Place or tip name</span><span class="field-type">Title</span></div>
+      <div class="field-row"><span class="field-name">City</span><span class="field-desc">e.g. Tokyo, Kyoto, Osaka</span><span class="field-type">Select</span></div>
+      <div class="field-row"><span class="field-name">Category</span><span class="field-desc">Food, Cafe, Sightseeing, Stay…</span><span class="field-type">Select</span></div>
+      <div class="field-row"><span class="field-name">Description</span><span class="field-desc">Your recommendation in your own words</span><span class="field-type">Text</span></div>
+      <div class="field-row"><span class="field-name">Photo 1</span><span class="field-desc">Direct image URL (ends in .jpg/.png)</span><span class="field-type">URL</span></div>
+      <div class="field-row"><span class="field-name">Photo 2</span><span class="field-desc">Optional second photo URL</span><span class="field-type">URL</span></div>
+      <div class="field-row"><span class="field-name">Photo 3</span><span class="field-desc">Optional third photo URL</span><span class="field-type">URL</span></div>
+      <div class="field-row"><span class="field-name">Map Link</span><span class="field-desc">Google Maps share link for this place</span><span class="field-type">URL</span></div>
+      <div class="field-row"><span class="field-name">Submitted By</span><span class="field-desc">Your name (as you'd like it shown)</span><span class="field-type">Text</span></div>
+    </div>
   </div>
   <div class="banner-kanji" aria-hidden="true">旅行</div>
 </div>
@@ -471,7 +323,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-brand">
-    <span class="kanji-badge">日</span>
+    <span class="footer-kanji">日</span>
     <div>
       <div style="font-size:0.85rem;font-weight:500">NSA UNSW Japan Guide</div>
       <div class="footer-text">Community-powered · Synced from Notion</div>
@@ -486,125 +338,245 @@
 </footer>
 
 <script>
-  let allEntries = [];
-  let activeFilter = 'all';
+  /* ── CONFIG ── */
+  const PALETTE = ['#c8392b','#7a5c3e','#2d6a4f','#1d4e89','#6a0572','#374151','#92400e','#0f766e','#854d0e','#4a1d96'];
+  const EMOJI   = {food:'🍜',cafe:'☕',sightseeing:'⛩️',temple:'⛩️',stay:'🏨',shopping:'🛍️',transport:'🚄',tip:'💡',entertainment:'🎭',nature:'🌿',museum:'🏛️',bar:'🍶',activity:'🎯',market:'🏮',restaurant:'🍽️',shrine:'⛩️',park:'🌸'};
+  const colorMap = {};
+  let allEntries = [], activeFilter = 'all', mapsInitialised = {};
 
+  function getCatColor(cat) {
+    const k = cat.toLowerCase();
+    if (!colorMap[k]) colorMap[k] = PALETTE[Object.keys(colorMap).length % PALETTE.length];
+    return colorMap[k];
+  }
+  function getCatEmoji(cat) { return EMOJI[cat.toLowerCase()] || '📍'; }
+
+  /* ── ESCAPE HTML ── */
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* ── EXTRACT LAT/LNG FROM GOOGLE MAPS URL ── */
+  function extractLatLng(url) {
+    if (!url) return null;
+    // Format: @lat,lng,zoom or /place/.../data=...!3dlat!4dlng
+    let m = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    // Format: ll=lat,lng
+    m = url.match(/ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    // Format: ?q=lat,lng
+    m = url.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    return null;
+  }
+
+  /* ── GALLERY ── */
+  function buildGallery(photos, cardId) {
+    if (!photos || photos.length === 0) {
+      return `<div class="card-gallery no-photos"><span class="no-photo-label">日本</span></div>`;
+    }
+    const imgs = photos.map((url, i) =>
+      `<img src="${esc(url)}" class="${i===0?'active':''}" alt="Photo ${i+1}" loading="lazy" onerror="this.style.display='none'">`
+    ).join('');
+    const dots = photos.length > 1 ? `
+      <div class="gallery-nav">
+        ${photos.map((_,i) => `<button class="gallery-dot ${i===0?'active':''}" onclick="goSlide('${cardId}',${i})"></button>`).join('')}
+      </div>
+      <button class="gallery-arrow gallery-prev" onclick="slideBy('${cardId}',-1)">‹</button>
+      <button class="gallery-arrow gallery-next" onclick="slideBy('${cardId}',1)">›</button>
+    ` : '';
+    return `<div class="card-gallery" id="gal-${cardId}" data-current="0" data-total="${photos.length}">${imgs}${dots}</div>`;
+  }
+
+  function goSlide(id, idx) {
+    const gal = document.getElementById('gal-' + id);
+    if (!gal) return;
+    const imgs = gal.querySelectorAll('img');
+    const dots = gal.querySelectorAll('.gallery-dot');
+    const total = parseInt(gal.dataset.total);
+    idx = ((idx % total) + total) % total;
+    imgs.forEach((img, i) => img.classList.toggle('active', i === idx));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+    gal.dataset.current = idx;
+  }
+
+  function slideBy(id, delta) {
+    const gal = document.getElementById('gal-' + id);
+    if (!gal) return;
+    goSlide(id, parseInt(gal.dataset.current) + delta);
+  }
+
+  /* ── MAP ── */
+  function buildMap(entry, cardId) {
+    const coords = extractLatLng(entry.mapLink);
+    // Only render map if we have coordinates or a map link
+    if (!entry.mapLink && !coords) return '';
+
+    const mapId = 'map-' + cardId;
+    const openBtn = entry.mapLink
+      ? `<a class="map-open-btn" href="${esc(entry.mapLink)}" target="_blank" rel="noopener">Open in Maps ↗</a>`
+      : '';
+
+    return `<div class="card-map-wrap">
+      <div class="card-map" id="${mapId}"></div>
+      ${openBtn}
+    </div>`;
+  }
+
+  function initMaps() {
+    // Initialise Leaflet maps for all cards currently in DOM
+    document.querySelectorAll('.card-map').forEach(el => {
+      const id = el.id;
+      if (mapsInitialised[id]) return;
+      mapsInitialised[id] = true;
+
+      // Find entry by card id (strip "map-" prefix)
+      const cardId = id.replace('map-', '');
+      const entry = allEntries.find(e => e.id === cardId);
+      if (!entry) return;
+
+      const coords = extractLatLng(entry.mapLink);
+      const center = coords || { lat: 35.6762, lng: 139.6503 }; // Tokyo default
+      const zoom   = coords ? 15 : 10;
+
+      const map = L.map(id, {
+        center: [center.lat, center.lng],
+        zoom,
+        scrollWheelZoom: false, // disable on page scroll, enable on map click
+        zoomControl: true,
+      });
+
+      // Enable scroll zoom only when map is focused
+      el.addEventListener('click', () => map.scrollWheelZoom.enable());
+      el.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      if (coords) {
+        // Custom red marker matching NSA brand
+        const icon = L.divIcon({
+          html: `<div style="width:14px;height:14px;background:#C8392B;border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>`,
+          className: '',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7],
+        });
+        L.marker([coords.lat, coords.lng], { icon })
+          .addTo(map)
+          .bindPopup(`<strong>${entry.title || 'Location'}</strong>${entry.city ? '<br>' + entry.city : ''}`)
+          .openPopup();
+      } else {
+        // No coordinates — show a note
+        L.popup({ closeButton: false })
+          .setLatLng([center.lat, center.lng])
+          .setContent('Open in Maps for exact location')
+          .addTo(map);
+      }
+    });
+  }
+
+  /* ── FILTERS ── */
   function setFilter(cat, btn) {
     activeFilter = cat;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    mapsInitialised = {}; // reset so maps reinit after re-render
     renderCards();
   }
 
-  // ── RENDER ──
+  function buildFilters(entries) {
+    const cats = [...new Set(entries.map(e => e.category).filter(Boolean))].sort();
+    const bar = document.getElementById('filter-bar');
+    bar.innerHTML = `<button class="filter-btn active" data-cat="all" onclick="setFilter('all',this)">All</button>`;
+    cats.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.textContent = getCatEmoji(cat) + ' ' + cat;
+      btn.onclick = function(){ setFilter(cat, this); };
+      bar.appendChild(btn);
+    });
+  }
+
+  /* ── RENDER CARDS ── */
   function renderCards() {
     const grid = document.getElementById('guide-grid');
     const q = (document.getElementById('search-input').value || '').toLowerCase();
 
     let filtered = allEntries.filter(e => {
-      const catMatch = activeFilter === 'all' || (e.category || '').toLowerCase() === activeFilter.toLowerCase();
-      const qMatch = !q ||
-        (e.title || '').toLowerCase().includes(q) ||
-        (e.city || '').toLowerCase().includes(q) ||
-        (e.description || '').toLowerCase().includes(q) ||
-        (e.category || '').toLowerCase().includes(q);
+      const catMatch = activeFilter === 'all' || (e.category||'').toLowerCase() === activeFilter.toLowerCase();
+      const qMatch   = !q || [e.title,e.city,e.description,e.category].some(f => (f||'').toLowerCase().includes(q));
       return catMatch && qMatch;
     });
 
     document.getElementById('result-count').textContent =
       filtered.length === 0 ? 'No results' :
       filtered.length === 1 ? '1 recommendation' :
-      `${filtered.length} recommendations`;
+      filtered.length + ' recommendations';
 
     if (filtered.length === 0) {
-      grid.innerHTML = `<div class="state-message">
-        <div class="state-icon">🔍</div>
-        <h3>No matches found</h3>
-        <p>Try a different filter or search term.</p>
-      </div>`;
+      grid.innerHTML = `<div class="state-message"><div class="state-icon">🔍</div><h3>No matches found</h3><p>Try a different filter or search term.</p></div>`;
       return;
     }
 
-    const PALETTE = ['#c8392b','#7a5c3e','#2d6a4f','#1d4e89','#6a0572','#374151','#92400e','#0f766e','#854d0e','#4a1d96'];
-    const EMOJI = {'food':'🍜','cafe':'☕','sightseeing':'⛩️','temple':'⛩️','stay':'🏨','shopping':'🛍️','transport':'🚄','tip':'💡','entertainment':'🎭','nature':'🌿','museum':'🏛️','bar':'🍶','activity':'🎯','market':'🏮'};
-    const colorMap = {};
-    function getCatColor(cat) {
-      const k = cat.toLowerCase();
-      if (!colorMap[k]) colorMap[k] = PALETTE[Object.keys(colorMap).length % PALETTE.length];
-      return colorMap[k];
-    }
-    function getCatEmoji(cat) { return EMOJI[cat.toLowerCase()] || '📍'; }
-
     grid.innerHTML = filtered.map(e => {
-      const cat = e.category || 'Tip';
+      const cat   = e.category || 'Tip';
       const color = getCatColor(cat);
-      const initials = (e.submittedBy || 'NSA').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      const init  = (e.submittedBy || 'NSA').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const cardId = e.id;
+
       return `<div class="guide-card">
-        <div class="card-meta">
-          <span class="card-category" style="background:${color}">${escHtml(cat)}</span>
-          <span>${escHtml(e.city || 'Japan')}</span>
-        </div>
-        <div class="card-title">${escHtml(e.title || 'Untitled')}</div>
-        ${e.city ? `<div class="card-city">📍 ${escHtml(e.city)}</div>` : ''}
-        ${e.description ? `<div class="card-desc">${escHtml(e.description)}</div>` : ''}
-        ${e.link ? `<a href="${escHtml(e.link)}" target="_blank" rel="noopener" style="font-size:0.78rem;color:var(--red);text-decoration:none">View on map →</a>` : ''}
-        <div class="card-footer">
-          <div class="card-author">
-            <div class="author-dot">${initials}</div>
-            <span>${escHtml(e.submittedBy || 'NSA Member')}</span>
+        ${buildGallery(e.photos, cardId)}
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="card-category" style="background:${color}">${esc(cat)}</span>
+            <span>${esc(e.city||'Japan')}</span>
           </div>
-          ${e.date ? `<span>${escHtml(e.date)}</span>` : ''}
+          <div class="card-title">${esc(e.title||'Untitled')}</div>
+          ${e.city ? `<div class="card-city">📍 ${esc(e.city)}</div>` : ''}
+          ${e.description ? `<div class="card-desc">${esc(e.description)}</div>` : ''}
+          ${(e.website||e.mapLink) ? `<div class="card-links">
+            ${e.website ? `<a class="card-link" href="${esc(e.website)}" target="_blank" rel="noopener">🌐 Website</a>` : ''}
+            ${e.mapLink  ? `<a class="card-link" href="${esc(e.mapLink)}" target="_blank" rel="noopener">🗺️ Google Maps</a>` : ''}
+          </div>` : ''}
+          <div class="card-footer">
+            <div class="card-author">
+              <div class="author-dot">${init}</div>
+              <span>${esc(e.submittedBy||'NSA Member')}</span>
+            </div>
+            ${e.date ? `<span>${esc(e.date)}</span>` : ''}
+          </div>
         </div>
+        ${buildMap(e, cardId)}
       </div>`;
     }).join('');
+
+    // Init Leaflet maps after DOM is ready
+    setTimeout(initMaps, 50);
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
+  /* ── STATS ── */
   function updateStats(entries) {
     document.getElementById('stat-entries').textContent = entries.length;
-    document.getElementById('stat-cities').textContent = new Set(entries.map(e => e.city).filter(Boolean)).size;
+    document.getElementById('stat-cities').textContent  = new Set(entries.map(e=>e.city).filter(Boolean)).size;
   }
 
-  function buildFilters(entries) {
-    const PALETTE = ['#c8392b','#7a5c3e','#2d6a4f','#1d4e89','#6a0572','#374151','#92400e','#0f766e','#854d0e','#4a1d96'];
-    const EMOJI = {'food':'🍜','cafe':'☕','sightseeing':'⛩️','temple':'⛩️','stay':'🏨','shopping':'🛍️','transport':'🚄','tip':'💡','entertainment':'🎭','nature':'🌿','museum':'🏛️','bar':'🍶','activity':'🎯','market':'🏮'};
-    const cats = [...new Set(entries.map(e => e.category).filter(Boolean))].sort();
-    const bar = document.getElementById('filter-bar');
-    bar.innerHTML = `<button class="filter-btn active" data-cat="all" onclick="setFilter('all',this)">All</button>`;
-    cats.forEach((cat, i) => {
-      const emoji = EMOJI[cat.toLowerCase()] || '📍';
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn';
-      btn.dataset.cat = cat;
-      btn.textContent = emoji + ' ' + cat;
-      btn.onclick = function(){ setFilter(cat, this); };
-      bar.appendChild(btn);
-    });
-  }
-
+  /* ── LOAD ── */
   async function loadGuide() {
     try {
       const res = await fetch('data.json?t=' + Date.now());
       if (!res.ok) throw new Error('not found');
       const data = await res.json();
       allEntries = data.entries || data || [];
-      if (allEntries.length === 0) throw new Error('empty');
+      if (!allEntries.length) throw new Error('empty');
       updateStats(allEntries);
       buildFilters(allEntries);
       renderCards();
       if (data.formUrl) document.getElementById('submit-link').href = data.formUrl;
-    } catch (err) {
+    } catch(e) {
       document.getElementById('stat-entries').textContent = '0';
-      document.getElementById('stat-cities').textContent = '0';
-      document.getElementById('guide-grid').innerHTML = `
-        <div class="state-message">
-          <div class="state-icon">🌸</div>
-          <h3>No entries yet</h3>
-          <p>Be the first to submit a tip!</p>
-        </div>`;
+      document.getElementById('stat-cities').textContent  = '0';
+      document.getElementById('guide-grid').innerHTML = `<div class="state-message"><div class="state-icon">🌸</div><h3>No entries yet</h3><p>Be the first to submit a tip!</p></div>`;
       document.getElementById('result-count').textContent = '0 recommendations';
     }
   }
