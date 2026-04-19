@@ -1,0 +1,29 @@
+{
+  "lastUpdated": "2026-04-19T09:10:00.774Z",
+  "formUrl": "https://spangle-throat-568.notion.site/347468fdd09e809e8f67dfed0a690b58?pvs=105",
+  "totalEntries": 2,
+  "entries": [
+    {
+      "id": "347468fd-d09e-80ac-b355-fc2a9f96aa60",
+      "title": "Dotonbori District",
+      "city": "Osaka",
+      "category": "Entertainment",
+      "description": "Vibrant entertainment district known for enormous illuminated billboards, street food culture, and the famous Glico Running Man sign along the Dotonbori canal",
+      "link": "",
+      "submittedBy": "",
+      "status": "Approved",
+      "date": "19 Apr 2026"
+    },
+    {
+      "id": "347468fd-d09e-8090-8a54-f3a6a00e6ac0",
+      "title": "Kinkaku-ji Golden Pavilion",
+      "city": "Kyoto",
+      "category": "Temple",
+      "description": "Stunning golden pavilion set in a serene zen garden with reflecting pond, one of Japan's most iconic landmarks showcasing traditional architecture",
+      "link": "",
+      "submittedBy": "",
+      "status": "Approved",
+      "date": "19 Apr 2026"
+    }
+  ]
+}
