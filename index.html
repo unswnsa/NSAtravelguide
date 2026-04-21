@@ -1,587 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NSA Japan Travel Guide</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Sans:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet"/>
-<!-- Leaflet for interactive maps -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSA UNSW × Japan Travel Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --red: #C8392B;
-    --cream: #FAF8F3;
-    --dark: #1A1A18;
-    --mid: #4a4a45;
-    --muted: #8a8a82;
-    --border: #e2dfd6;
-    --card-bg: #ffffff;
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-jp: 'Noto Serif JP', serif;
-    --font-body: 'DM Sans', sans-serif;
+    --red:#C8372D;--red-light:#FAEAEA;--red-mid:#E8635A;
+    --ink:#1A1410;--ink-soft:#3D342C;
+    --parchment:#F9F4EE;--parchment-dark:#EDE5D8;
+    --gold:#B8902A;--gold-light:#F5EDD6;
+    --cream:#FFFDF9;--muted:#8A7D6F;
+    --border:rgba(26,20,16,0.12);
+    --green:#226B3A;--green-light:#EAF5EE;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: var(--font-body); background: var(--cream); color: var(--dark); font-size: 16px; line-height: 1.7; }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-    background: rgba(250,248,243,0.94); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2.5rem; height: 60px;
-  }
-  .nav-logo { font-family: var(--font-jp); font-size: 1.05rem; color: var(--dark); text-decoration: none; display: flex; align-items: center; gap: 10px; }
-  .nav-logo-kanji { width: 34px; height: 34px; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border-radius: 4px; }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mid); text-decoration: none; font-weight: 500; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--red); }
-  .nav-cta { font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--dark); color: #fff; padding: 8px 18px; border-radius: 3px; text-decoration: none; font-weight: 500; transition: background 0.2s; }
-  .nav-cta:hover { background: var(--red); }
-
-  /* HERO */
-  .hero { padding-top: 60px; min-height: 88vh; display: grid; grid-template-columns: 1fr 1fr; }
-  .hero-left { padding: 8rem 4rem 5rem 5rem; display: flex; flex-direction: column; justify-content: center; }
-  .hero-tag { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); font-weight: 500; margin-bottom: 1.5rem; }
-  .hero h1 { font-family: var(--font-display); font-size: clamp(3rem,5vw,4.8rem); font-weight: 500; line-height: 1.1; margin-bottom: 1.5rem; }
-  .hero h1 em { font-style: italic; color: var(--red); }
-  .hero-sub { font-size: 1rem; color: var(--mid); max-width: 420px; margin-bottom: 2.5rem; font-weight: 300; line-height: 1.8; }
-  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-  .btn-primary { background: var(--dark); color: #fff; padding: 12px 28px; border-radius: 3px; text-decoration: none; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; transition: background 0.2s; border: none; cursor: pointer; font-family: var(--font-body); }
-  .btn-primary:hover { background: var(--red); }
-  .btn-ghost { border: 1.5px solid var(--dark); color: var(--dark); padding: 12px 28px; border-radius: 3px; text-decoration: none; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; transition: all 0.2s; }
-  .btn-ghost:hover { border-color: var(--red); color: var(--red); }
-  .hero-stats { display: flex; gap: 2.5rem; margin-top: 3.5rem; border-top: 1px solid var(--border); padding-top: 2rem; }
-  .stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; }
-  .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-  .hero-right { background: var(--dark); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-  .hero-jp-text { font-family: var(--font-jp); font-size: clamp(5rem,14vw,11rem); color: rgba(255,255,255,0.06); font-weight: 300; position: absolute; user-select: none; }
-  .hero-badge { position: relative; z-index: 1; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2.5rem; text-align: center; max-width: 280px; }
-  .hero-badge-kanji { font-family: var(--font-jp); font-size: 4rem; color: #fff; line-height: 1; margin-bottom: 1rem; display: block; }
-  .hero-badge p { color: rgba(255,255,255,0.65); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; }
-  .hero-badge strong { color: #fff; display: block; font-family: var(--font-display); font-size: 1.1rem; font-weight: 400; margin-top: 0.3rem; }
-
-  /* HOW IT WORKS */
-  #how { background: var(--dark); color: #fff; padding: 6rem 5rem; }
-  .section-tag { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); font-weight: 500; margin-bottom: 0.75rem; }
-  .section-title { font-family: var(--font-display); font-size: clamp(2rem,4vw,3rem); font-weight: 500; line-height: 1.2; margin-bottom: 1.2rem; }
-  .section-title em { font-style: italic; color: var(--red); }
-  .section-sub { font-size: 0.95rem; color: var(--mid); max-width: 560px; font-weight: 300; line-height: 1.8; }
-  #how .section-title { color: #fff; }
-  #how .section-sub { color: rgba(255,255,255,0.55); }
-  .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 4rem; }
-  .step { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 2.5rem 2rem; }
-  .step-num { font-family: var(--font-display); font-size: 3.5rem; color: rgba(255,255,255,0.12); font-weight: 600; line-height: 1; margin-bottom: 1.5rem; }
-  .step h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.6rem; }
-  .step p { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.75; }
-  .step-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
-
-  /* GUIDE SECTION */
-  #guide { padding: 6rem 5rem; }
-  .guide-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; }
-  .search-wrap { position: relative; width: 320px; }
-  .search-wrap input { width: 100%; padding: 11px 16px 11px 40px; border: 1.5px solid var(--border); border-radius: 3px; font-family: var(--font-body); font-size: 0.9rem; background: #fff; color: var(--dark); outline: none; transition: border-color 0.2s; }
-  .search-wrap input:focus { border-color: var(--dark); }
-  .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-  .filters { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-  .filter-btn { font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; border: 1.5px solid var(--border); background: transparent; color: var(--mid); padding: 7px 16px; border-radius: 2px; cursor: pointer; font-family: var(--font-body); font-weight: 500; transition: all 0.15s; }
-  .filter-btn:hover { border-color: var(--dark); background: var(--dark); color: #fff; }
-  .filter-btn.active { border-color: var(--red); background: var(--red); color: #fff; }
-  .guide-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-  .result-count { font-size: 0.82rem; color: var(--muted); }
-
-  /* GRID */
-  #guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5px; background: var(--border); border: 1.5px solid var(--border); }
-
-  /* CARD */
-  .guide-card { background: var(--card-bg); display: flex; flex-direction: column; }
-
-  /* PHOTO GALLERY */
-  .card-gallery { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; background: #f0ece4; }
-  .card-gallery img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s; }
-  .card-gallery img.active { opacity: 1; }
-  .gallery-nav { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 2; }
-  .gallery-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.2s; border: none; padding: 0; }
-  .gallery-dot.active { background: #fff; }
-  .gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.35); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 2; transition: background 0.15s; }
-  .gallery-arrow:hover { background: rgba(0,0,0,0.6); }
-  .gallery-prev { left: 10px; }
-  .gallery-next { right: 10px; }
-  .card-gallery.no-photos { display: flex; align-items: center; justify-content: center; }
-  .card-gallery.no-photos .no-photo-label { font-family: var(--font-jp); font-size: 2rem; color: rgba(0,0,0,0.12); user-select: none; }
-
-  /* MAP */
-  .card-map-wrap { position: relative; width: 100%; height: 200px; border-top: 1.5px solid var(--border); }
-  .card-map { width: 100%; height: 100%; }
-  .map-open-btn { position: absolute; top: 8px; right: 8px; z-index: 400; background: #fff; border: 1px solid var(--border); border-radius: 3px; padding: 4px 10px; font-size: 0.72rem; font-family: var(--font-body); color: var(--dark); text-decoration: none; letter-spacing: 0.04em; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .map-open-btn:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
-
-  /* CARD BODY */
-  .card-body { padding: 1.6rem; display: flex; flex-direction: column; gap: 0.65rem; flex: 1; }
-  .card-meta { display: flex; align-items: center; gap: 0.6rem; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
-  .card-category { padding: 3px 9px; border-radius: 2px; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: #fff; }
-  .card-title { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; line-height: 1.25; color: var(--dark); }
-  .card-city { font-size: 0.8rem; color: var(--muted); }
-  .card-desc { font-size: 0.88rem; color: var(--mid); line-height: 1.75; font-weight: 300; }
-  .card-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.25rem; }
-  .card-link { font-size: 0.78rem; color: var(--red); text-decoration: none; letter-spacing: 0.03em; display: inline-flex; align-items: center; gap: 4px; }
-  .card-link:hover { text-decoration: underline; }
-  .card-footer { margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
-  .card-author { display: flex; align-items: center; gap: 6px; }
-  .author-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 500; flex-shrink: 0; }
-
-  /* STATES */
-  .state-message { grid-column: 1/-1; padding: 5rem 2rem; text-align: center; background: var(--card-bg); }
-  .state-icon { font-size: 2.5rem; margin-bottom: 1rem; }
-  .state-message h3 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 0.5rem; }
-  .state-message p { color: var(--muted); font-size: 0.9rem; }
-  .loading-dots { display: flex; gap: 6px; justify-content: center; margin-top: 1rem; }
-  .loading-dots span { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); animation: pulse 1.2s infinite; }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes pulse { 0%,80%,100%{opacity:0.3} 40%{opacity:1} }
-
-  /* SUBMIT */
-  .submit-banner { background: var(--dark); color: #fff; padding: 5rem; display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; }
-  .submit-banner h2 { font-family: var(--font-display); font-size: clamp(1.8rem,3vw,2.8rem); font-weight: 500; margin-bottom: 0.75rem; }
-  .submit-banner h2 em { font-style: italic; color: #e87a6b; }
-  .submit-banner p { color: rgba(255,255,255,0.55); font-size: 0.9rem; line-height: 1.8; font-weight: 300; margin-bottom: 1.5rem; }
-  .submit-note { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.75rem; }
-  .banner-kanji { font-family: var(--font-jp); font-size: 5rem; color: rgba(255,255,255,0.07); font-weight: 300; user-select: none; }
-
-  /* NOTION FIELDS GUIDE */
-  .fields-guide { background: #fff; border: 1.5px solid var(--border); border-radius: 4px; padding: 1.5rem 1.75rem; margin-top: 1.5rem; }
-  .fields-guide h4 { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; font-weight: 500; }
-  .field-row { display: flex; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; align-items: baseline; }
-  .field-row:last-child { border-bottom: none; }
-  .field-name { font-weight: 500; color: var(--dark); min-width: 130px; font-family: monospace; font-size: 0.78rem; background: #f5f3ee; padding: 2px 6px; border-radius: 3px; }
-  .field-desc { color: var(--mid); }
-  .field-type { color: var(--muted); font-size: 0.72rem; margin-left: auto; white-space: nowrap; }
-
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 3rem 5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
-  .footer-brand { display: flex; align-items: center; gap: 10px; }
-  .footer-kanji { width: 30px; height: 30px; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-family: var(--font-jp); border-radius: 3px; }
-  .footer-text { font-size: 0.8rem; color: var(--muted); }
-  .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a { font-size: 0.78rem; color: var(--muted); text-decoration: none; text-transform: uppercase; letter-spacing: 0.07em; transition: color 0.2s; }
-  .footer-links a:hover { color: var(--red); }
-
-  /* RESPONSIVE */
-  @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; }
-    .hero-right { min-height: 260px; }
-    .hero-left { padding: 6rem 2rem 3rem; }
-    #guide { padding: 4rem 1.5rem; }
-    #how { padding: 4rem 1.5rem; }
-    .steps { grid-template-columns: 1fr; }
-    .submit-banner { grid-template-columns: 1fr; padding: 3rem 1.5rem; }
-    .banner-kanji { display: none; }
-    footer { padding: 2.5rem 1.5rem; flex-direction: column; align-items: flex-start; }
-    nav { padding: 0 1.5rem; }
-    .nav-links { display: none; }
-    #guide-grid { grid-template-columns: 1fr; }
-    .search-wrap { width: 100%; }
-    .guide-top { flex-direction: column; align-items: flex-start; }
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-  .hero-left > * { animation: fadeUp 0.6s both; }
-  .hero-left > *:nth-child(1){animation-delay:.1s}
-  .hero-left > *:nth-child(2){animation-delay:.2s}
-  .hero-left > *:nth-child(3){animation-delay:.3s}
-  .hero-left > *:nth-child(4){animation-delay:.4s}
-  .hero-left > *:nth-child(5){animation-delay:.5s}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--ink);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:100;background:var(--ink);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:56px;border-bottom:2px solid var(--red);}
+  .nav-brand{display:flex;align-items:center;gap:12px;font-family:'Shippori Mincho',serif;color:var(--cream);font-size:16px;font-weight:600;text-decoration:none;letter-spacing:.02em;cursor:pointer;}
+  .nav-brand .jp{font-size:22px;color:var(--red-mid);}
+  .nav-links{display:flex;gap:2px;}
+  .nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13.5px;font-weight:400;padding:6px 14px;border-radius:6px;transition:all .2s;cursor:pointer;}
+  .nav-links a:hover,.nav-links a.active{color:var(--cream);background:rgba(255,255,255,.08);}
+  .nav-links a.special{color:var(--gold);}
+  .nav-links a.special:hover,.nav-links a.special.active{background:rgba(184,144,42,.15);color:var(--gold);}
+  .nav-join{background:var(--red)!important;color:white!important;padding:7px 16px!important;border-radius:6px!important;font-weight:500!important;}
+  .page{display:none;}.page.active{display:block;}
+  .hero{background:var(--ink);padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'日本';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:'Shippori Mincho',serif;font-size:220px;font-weight:700;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
+  .hero-eyebrow{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--red-mid);font-weight:500;margin-bottom:1.5rem;}
+  .hero h1{font-family:'Shippori Mincho',serif;font-size:clamp(2.4rem,6vw,4.2rem);color:var(--cream);font-weight:700;line-height:1.15;margin-bottom:1.5rem;}
+  .hero h1 em{color:var(--red-mid);font-style:italic;}
+  .hero p{color:rgba(255,255,255,.55);font-size:17px;max-width:520px;margin:0 auto 2.5rem;line-height:1.7;}
+  .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{background:var(--red);color:white;padding:13px 28px;border-radius:8px;font-size:15px;font-weight:500;border:none;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+  .btn-primary:hover{background:#a82d24;transform:translateY(-1px);}
+  .btn-outline{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,.25);padding:12px 28px;border-radius:8px;font-size:15px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+  .btn-outline:hover{border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);}
+  .stats-bar{background:var(--cream);border-bottom:1px solid var(--border);display:flex;justify-content:center;flex-wrap:wrap;}
+  .stat-item{padding:1.4rem 3rem;border-right:1px solid var(--border);text-align:center;}
+  .stat-item:last-child{border-right:none;}
+  .stat-num{font-family:'Shippori Mincho',serif;font-size:2rem;font-weight:700;color:var(--ink);display:block;}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+  .section{max-width:1080px;margin:0 auto;padding:4rem 2rem;}
+  .section-title{font-family:'Shippori Mincho',serif;font-size:2rem;font-weight:700;margin-bottom:.5rem;}
+  .section-title em{color:var(--red);font-style:italic;}
+  .section-sub{color:var(--muted);font-size:15px;margin-bottom:2.5rem;}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;}
+  .how-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;padding:1.8rem 1.5rem;}
+  .how-num{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:500;margin-bottom:1rem;}
+  .how-icon{font-size:28px;margin-bottom:.75rem;}
+  .how-card h3{font-size:15px;font-weight:500;margin-bottom:.5rem;}
+  .how-card p{font-size:14px;color:var(--muted);line-height:1.6;}
+  .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;}
+  .filter-btn{padding:7px 18px;border-radius:999px;border:1.5px solid var(--border);background:var(--cream);font-size:13px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;color:var(--ink-soft);}
+  .filter-btn:hover,.filter-btn.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .filter-btn.cat.active{background:var(--red);border-color:var(--red);color:white;}
+  .tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
+  .tip-card{background:var(--cream);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .25s,box-shadow .25s;}
+  .tip-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(26,20,16,.1);}
+  .tip-img{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--parchment-dark);}
+  .tip-body{padding:1.2rem 1.25rem;}
+  .tip-meta{display:flex;gap:8px;margin-bottom:.6rem;flex-wrap:wrap;align-items:center;}
+  .tip-tag{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:4px;}
+  .tag-food{background:#FEF3EB;color:#C05C1A;}.tag-cafe{background:#F0EBF8;color:#6A3FA6;}
+  .tag-sight{background:#EAF5EE;color:#226B3A;}.tag-stay{background:#EBF2FE;color:#1A4FA6;}
+  .tag-shopping{background:var(--gold-light);color:#7A5C10;}.tag-other{background:var(--parchment-dark);color:var(--muted);}
+  .tip-city{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+  .tip-card h3{font-size:15px;font-weight:500;margin-bottom:.4rem;}
+  .tip-card p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .tip-footer{padding:.75rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .tip-by{font-size:12px;color:var(--muted);}
+  .tip-by strong{color:var(--ink-soft);font-weight:500;}
+  .tip-map a{font-size:12px;color:var(--red);text-decoration:none;font-weight:500;}
+  .submit-section{background:var(--ink);color:var(--cream);padding:4rem 2rem;}
+  .submit-inner{max-width:680px;margin:0 auto;}
+  .submit-inner .section-title{color:var(--cream);}
+  .submit-inner .section-title em{color:var(--red-mid);}
+  .submit-inner .section-sub{color:rgba(255,255,255,.45);}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+  .form-full{grid-column:1/-1;}
+  label{font-size:12.5px;font-weight:500;color:rgba(255,255,255,.55);display:block;margin-bottom:5px;}
+  input,select,textarea{width:100%;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:var(--cream);font-size:14px;font-family:'DM Sans',sans-serif;transition:border-color .2s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red-mid);}
+  select option{background:var(--ink);}
+  textarea{resize:vertical;min-height:90px;}
+  .form-submit-btn{margin-top:1.5rem;background:var(--red);color:white;padding:14px 36px;border-radius:8px;border:none;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:10px;min-width:180px;justify-content:center;}
+  .form-submit-btn:hover:not(:disabled){background:#a82d24;}
+  .form-submit-btn:disabled{opacity:.6;cursor:not-allowed;}
+  .ai-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:5px 12px;font-size:12px;color:rgba(255,255,255,.5);margin-bottom:1.75rem;}
+  .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);}
+  .mod-status{margin-top:1.5rem;border-radius:12px;padding:1.25rem 1.5rem;display:none;border:1px solid;}
+  .mod-reviewing{background:rgba(184,144,42,.12);border-color:rgba(184,144,42,.3)!important;display:flex!important;align-items:center;gap:12px;}
+  .mod-approved{background:rgba(34,107,58,.15);border-color:rgba(34,107,58,.3)!important;display:block!important;}
+  .mod-rejected{background:rgba(200,55,45,.12);border-color:rgba(200,55,45,.3)!important;display:block!important;}
+  .mod-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .mod-reason{font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.55;}
+  .spinner{width:18px;height:18px;border-radius:50%;flex-shrink:0;border:2px solid rgba(184,144,42,.3);border-top-color:var(--gold);animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .admin-section{background:var(--parchment-dark);border-top:2px solid var(--border);padding:3rem 2rem;}
+  .admin-inner{max-width:860px;margin:0 auto;}
+  .admin-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:12px;flex-wrap:wrap;}
+  .admin-title{font-family:'Shippori Mincho',serif;font-size:1.4rem;font-weight:700;}
+  .admin-lock{display:flex;align-items:center;gap:8px;}
+  .admin-lock input{width:180px;background:var(--cream);border:1px solid var(--border);border-radius:8px;color:var(--ink);font-size:13px;padding:7px 12px;}
+  .admin-lock input:focus{outline:none;border-color:var(--red);}
+  .admin-lock button{background:var(--ink);color:var(--cream);border:none;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .queue-list{display:flex;flex-direction:column;gap:12px;}
+  .queue-item{background:var(--cream);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.25rem;}
+  .queue-item-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:.5rem;}
+  .queue-item h4{font-size:14px;font-weight:500;}
+  .queue-meta{font-size:12px;color:var(--muted);margin-bottom:.5rem;}
+  .queue-desc{font-size:13px;color:var(--ink-soft);line-height:1.55;margin-bottom:.75rem;}
+  .queue-actions{display:flex;gap:8px;}
+  .btn-approve{background:var(--green-light);color:var(--green);border:1px solid rgba(34,107,58,.2);border-radius:7px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .btn-approve:hover{background:#d1f0dc;}
+  .btn-reject{background:var(--red-light);color:var(--red);border:1px solid rgba(200,55,45,.2);border-radius:7px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .btn-reject:hover{background:#f5d0ce;}
+  .ai-verdict{font-size:12px;padding:4px 10px;border-radius:6px;font-weight:500;}
+  .verdict-pass{background:var(--green-light);color:var(--green);}
+  .verdict-fail{background:var(--red-light);color:var(--red);}
+  .verdict-pending{background:var(--gold-light);color:var(--gold);}
+  .guests-hero{background:#1A1410;padding:4.5rem 2rem 3.5rem;text-align:center;position:relative;overflow:hidden;}
+  .guests-hero::before{content:'特別';position:absolute;left:-30px;top:50%;transform:translateY(-50%);font-family:'Shippori Mincho',serif;font-size:200px;font-weight:700;color:rgba(184,144,42,.08);pointer-events:none;line-height:1;}
+  .guests-hero-badge{display:inline-block;background:var(--gold-light);color:var(--gold);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:5px 16px;border-radius:999px;margin-bottom:1.5rem;}
+  .guests-hero h1{font-family:'Shippori Mincho',serif;font-size:clamp(2rem,5vw,3.5rem);color:var(--cream);font-weight:700;margin-bottom:1rem;line-height:1.2;}
+  .guests-hero p{color:rgba(255,255,255,.5);font-size:16px;max-width:480px;margin:0 auto;line-height:1.7;}
+  .guests-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2rem;}
+  .guest-card{background:var(--cream);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:transform .3s,box-shadow .3s;}
+  .guest-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(26,20,16,.12);}
+  .guest-card.featured{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+  .guest-header{padding:2rem 1.75rem 1.25rem;display:flex;gap:1rem;align-items:flex-start;}
+  .guest-avatar{width:72px;height:72px;border-radius:50%;background:var(--parchment-dark);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;border:2px solid var(--border);}
+  .guest-avatar.gold{border-color:var(--gold);background:var(--gold-light);}
+  .guest-info{flex:1;}
+  .guest-role{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--red);font-weight:600;margin-bottom:.3rem;}
+  .guest-role.gold-role{color:var(--gold);}
+  .guest-info h2{font-family:'Shippori Mincho',serif;font-size:1.4rem;font-weight:700;margin-bottom:.2rem;}
+  .guest-title-sub{font-size:13px;color:var(--muted);}
+  .guest-badge{margin-left:auto;flex-shrink:0;background:var(--gold-light);color:var(--gold);font-size:11px;font-weight:600;padding:4px 12px;border-radius:6px;letter-spacing:.06em;}
+  .guest-body{padding:0 1.75rem 1.5rem;}
+  .guest-quote{font-style:italic;font-size:14.5px;line-height:1.65;color:var(--ink-soft);padding-left:1rem;border-left:3px solid var(--red-mid);margin-bottom:1.2rem;}
+  .guest-tip-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.6rem;}
+  .guest-tips{display:flex;flex-direction:column;gap:.5rem;}
+  .guest-tip-item{display:flex;gap:10px;align-items:baseline;font-size:13.5px;color:var(--ink-soft);}
+  .guest-tip-item::before{content:'→';color:var(--red);font-size:13px;flex-shrink:0;}
+  .guest-footer{padding:1rem 1.75rem;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
+  .guest-tag{font-size:11.5px;background:var(--parchment);color:var(--ink-soft);padding:4px 12px;border-radius:999px;border:1px solid var(--border);}
+  footer{background:var(--ink);color:rgba(255,255,255,.4);text-align:center;padding:2.5rem 2rem;font-size:13px;line-height:1.8;}
+  footer a{color:rgba(255,255,255,.5);text-decoration:none;}
+  footer a:hover{color:var(--cream);}
+  .footer-links{display:flex;gap:1.5rem;justify-content:center;margin-bottom:.75rem;flex-wrap:wrap;}
+  .footer-jp{font-family:'Shippori Mincho',serif;font-size:22px;color:var(--red-mid);margin-bottom:1rem;}
+  #toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink);color:var(--cream);padding:14px 22px;border-radius:10px;font-size:14px;font-weight:500;transform:translateY(8px);opacity:0;transition:all .3s;pointer-events:none;z-index:999;border-left:4px solid var(--red);}
+  #toast.show{opacity:1;transform:translateY(0);}
+  @media(max-width:600px){.form-grid{grid-template-columns:1fr;}.stat-item{padding:1.2rem 1.5rem;}nav{padding:0 1rem;}.nav-links a{padding:6px 10px;font-size:12px;}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <a href="https://unswnsa.github.io/NipponStudentAssociation/" class="nav-logo">
-    <span class="nav-logo-kanji">日</span>NSA UNSW
-  </a>
-  <ul class="nav-links">
-    <li><a href="https://unswnsa.github.io/NipponStudentAssociation/#about">About</a></li>
-    <li><a href="https://unswnsa.github.io/NipponStudentAssociation/#highlights">Highlights</a></li>
-    <li><a href="#guide">Guide</a></li>
-    <li><a href="#submit">Submit</a></li>
-  </ul>
-  <a href="https://campus.hellorubric.com/?s=2089" class="nav-cta">Join NSA →</a>
+  <div class="nav-brand" onclick="showPage('home')"><span class="jp">旅</span>NSA UNSW</div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" class="active" id="nav-home">Guide</a>
+    <a onclick="showPage('guests')" id="nav-guests" class="special">✦ Special Guests</a>
+    <a onclick="showPage('home');setTimeout(()=>document.getElementById('submit-anchor').scrollIntoView({behavior:'smooth'}),120)">Submit a tip</a>
+    <a href="https://campus.hellorubric.com/?s=2089" target="_blank" class="nav-join">Join NSA →</a>
+  </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero" style="padding:0">
-  <div class="hero-left">
-    <p class="hero-tag">NSA UNSW × Community Guide</p>
-    <h1>Japan, through<br>our <em>members'</em><br>eyes.</h1>
-    <p class="hero-sub">Real recommendations from NSA members who've been there — photos, maps, and all. Updated automatically as our community grows.</p>
-    <div class="hero-actions">
-      <a href="#guide" class="btn-primary">Browse the guide →</a>
-      <a href="#submit" class="btn-ghost">Submit a tip</a>
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <p class="hero-eyebrow">NSA UNSW × Community Guide</p>
+    <h1>Japan, through our <em>members'</em> eyes.</h1>
+    <p>Real recommendations from NSA members who've been there — photos, maps, and all. Updated as our community grows.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('guide-section').scrollIntoView({behavior:'smooth'})">Browse the guide →</button>
+      <button class="btn-outline" onclick="document.getElementById('submit-anchor').scrollIntoView({behavior:'smooth'})">Submit a tip</button>
     </div>
-    <div class="hero-stats">
-      <div><div class="stat-num" id="stat-entries">—</div><div class="stat-label">Community tips</div></div>
-      <div><div class="stat-num" id="stat-cities">—</div><div class="stat-label">Cities covered</div></div>
-      <div><div class="stat-num">500+</div><div class="stat-label">NSA members</div></div>
+  </section>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num" id="tip-count">12</span><span class="stat-label">Community tips</span></div>
+    <div class="stat-item"><span class="stat-num">5</span><span class="stat-label">Cities covered</span></div>
+    <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">NSA members</span></div>
+    <div class="stat-item"><span class="stat-num">旅</span><span class="stat-label">Japan 2025–26</span></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">A living guide that grows <em>with our community</em></h2>
+    <p class="section-sub">Submit a tip, it gets reviewed by AI instantly, and goes live — no waiting, no Notion required.</p>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01</div><div class="how-icon">📝</div><h3>Submit your tip</h3><p>Fill in the form with the place name, city, category, your description and a Google Maps link.</p></div>
+      <div class="how-card"><div class="how-num">02</div><div class="how-icon">🤖</div><h3>AI reviews it instantly</h3><p>Claude checks it's genuine, on-topic, and appropriate. Spam, off-topic posts, and anything harmful gets filtered automatically.</p></div>
+      <div class="how-card"><div class="how-num">03</div><div class="how-icon">🗾</div><h3>It goes live</h3><p>Approved tips appear on the guide immediately. Rejected ones get a clear explanation so you can resubmit.</p></div>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="hero-jp-text">旅</div>
-    <div class="hero-badge">
-      <span class="hero-badge-kanji">日本</span>
-      <p>Community travel guide</p>
-      <strong>By students, for students</strong>
+
+  <div class="section" id="guide-section" style="padding-top:0;">
+    <h2 class="section-title">Member-approved <em>recommendations</em></h2>
+    <p class="section-sub">Browse and filter by city or category.</p>
+    <div class="filter-row" id="city-filters">
+      <button class="filter-btn active" data-city="all" onclick="filterTips('city','all')">All cities</button>
+      <button class="filter-btn" data-city="Tokyo" onclick="filterTips('city','Tokyo')">Tokyo</button>
+      <button class="filter-btn" data-city="Kyoto" onclick="filterTips('city','Kyoto')">Kyoto</button>
+      <button class="filter-btn" data-city="Osaka" onclick="filterTips('city','Osaka')">Osaka</button>
+      <button class="filter-btn" data-city="Hiroshima" onclick="filterTips('city','Hiroshima')">Hiroshima</button>
+      <button class="filter-btn" data-city="Nara" onclick="filterTips('city','Nara')">Nara</button>
     </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<div id="how">
-  <p class="section-tag">How it works</p>
-  <h2 class="section-title">A living guide that grows<br><em>with our community</em></h2>
-  <p class="section-sub">Members submit tips via Notion, we approve them, and they appear here automatically — with photos and an interactive map.</p>
-  <div class="steps">
-    <div class="step">
-      <span class="step-icon">📝</span>
-      <div class="step-num">01</div>
-      <h3>Submit your tip</h3>
-      <p>Fill in our form with the place name, city, category, your description, up to 3 photo URLs, and a Google Maps link.</p>
+    <div class="filter-row" id="cat-filters">
+      <button class="filter-btn cat active" data-cat="all" onclick="filterTips('cat','all')">All types</button>
+      <button class="filter-btn cat" data-cat="Food" onclick="filterTips('cat','Food')">🍜 Food</button>
+      <button class="filter-btn cat" data-cat="Cafe" onclick="filterTips('cat','Cafe')">☕ Cafe</button>
+      <button class="filter-btn cat" data-cat="Sightseeing" onclick="filterTips('cat','Sightseeing')">⛩️ Sightseeing</button>
+      <button class="filter-btn cat" data-cat="Shopping" onclick="filterTips('cat','Shopping')">🛍️ Shopping</button>
+      <button class="filter-btn cat" data-cat="Stay" onclick="filterTips('cat','Stay')">🏡 Stay</button>
     </div>
-    <div class="step">
-      <span class="step-icon">✅</span>
-      <div class="step-num">02</div>
-      <h3>We review it</h3>
-      <p>Our team checks each entry in Notion and marks it as Approved. Usually within a day or two.</p>
-    </div>
-    <div class="step">
-      <span class="step-icon">🗾</span>
-      <div class="step-num">03</div>
-      <h3>It goes live here</h3>
-      <p>A GitHub Action syncs approved entries every hour. Your photos and map pin appear on this page automatically.</p>
-    </div>
+    <div class="tips-grid" id="tips-grid"></div>
   </div>
-</div>
 
-<!-- GUIDE -->
-<section id="guide">
-  <div class="guide-top">
-    <div>
-      <p class="section-tag">Community guide</p>
-      <h2 class="section-title" style="margin-bottom:0">Member-approved<br><em>recommendations</em></h2>
-    </div>
-    <div class="search-wrap">
-      <span class="search-icon">⌕</span>
-      <input type="text" id="search-input" placeholder="Search places, cities…" oninput="renderCards()"/>
-    </div>
-  </div>
-  <div class="filters" id="filter-bar">
-    <button class="filter-btn active" data-cat="all" onclick="setFilter('all',this)">All</button>
-  </div>
-  <div class="guide-meta">
-    <span class="result-count" id="result-count"></span>
-  </div>
-  <div id="guide-grid">
-    <div class="state-message">
-      <div class="state-icon">🗾</div>
-      <h3>Loading recommendations…</h3>
-      <p>Fetching entries from the community database.</p>
-      <div class="loading-dots"><span></span><span></span><span></span></div>
-    </div>
-  </div>
-</section>
-
-<!-- SUBMIT BANNER -->
-<div class="submit-banner" id="submit">
-  <div>
-    <h2>Been to Japan?<br><em>Share your finds.</em></h2>
-    <p>Hidden ramen joints, the shrine nobody else visits, a cafe with the perfect matcha — submit your tip with photos and a map link. Help the next NSA member have a better trip.</p>
-    <a href="https://www.notion.so" target="_blank" class="btn-primary" id="submit-link">Submit a tip →</a>
-    <p class="submit-note">Entries are reviewed before going live. NSA members only.</p>
-
-    <div class="fields-guide">
-      <h4>Fields to fill in your submission</h4>
-      <div class="field-row"><span class="field-name">Name</span><span class="field-desc">Place or tip name</span><span class="field-type">Title</span></div>
-      <div class="field-row"><span class="field-name">City</span><span class="field-desc">e.g. Tokyo, Kyoto, Osaka</span><span class="field-type">Select</span></div>
-      <div class="field-row"><span class="field-name">Category</span><span class="field-desc">Food, Cafe, Sightseeing, Stay…</span><span class="field-type">Select</span></div>
-      <div class="field-row"><span class="field-name">Description</span><span class="field-desc">Your recommendation in your own words</span><span class="field-type">Text</span></div>
-      <div class="field-row"><span class="field-name">Photo 1</span><span class="field-desc">Direct image URL (ends in .jpg/.png)</span><span class="field-type">URL</span></div>
-      <div class="field-row"><span class="field-name">Photo 2</span><span class="field-desc">Optional second photo URL</span><span class="field-type">URL</span></div>
-      <div class="field-row"><span class="field-name">Photo 3</span><span class="field-desc">Optional third photo URL</span><span class="field-type">URL</span></div>
-      <div class="field-row"><span class="field-name">Map Link</span><span class="field-desc">Google Maps share link for this place</span><span class="field-type">URL</span></div>
-      <div class="field-row"><span class="field-name">Submitted By</span><span class="field-desc">Your name (as you'd like it shown)</span><span class="field-type">Text</span></div>
-    </div>
-  </div>
-  <div class="banner-kanji" aria-hidden="true">旅行</div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-brand">
-    <span class="footer-kanji">日</span>
-    <div>
-      <div style="font-size:0.85rem;font-weight:500">NSA UNSW Japan Guide</div>
-      <div class="footer-text">Community-powered · Synced from Notion</div>
-    </div>
-  </div>
-  <div class="footer-links">
-    <a href="https://unswnsa.github.io/NipponStudentAssociation/">NSA Home</a>
-    <a href="https://www.instagram.com/nsaunsw/">Instagram</a>
-    <a href="https://campus.hellorubric.com/?s=2089">Join NSA</a>
-  </div>
-  <div class="footer-text">© 2026 NSA UNSW — Made with ❤️ by the NSA team</div>
-</footer>
-
-<script>
-  /* ── CONFIG ── */
-  const PALETTE = ['#c8392b','#7a5c3e','#2d6a4f','#1d4e89','#6a0572','#374151','#92400e','#0f766e','#854d0e','#4a1d96'];
-  const EMOJI   = {food:'🍜',cafe:'☕',sightseeing:'⛩️',temple:'⛩️',stay:'🏨',shopping:'🛍️',transport:'🚄',tip:'💡',entertainment:'🎭',nature:'🌿',museum:'🏛️',bar:'🍶',activity:'🎯',market:'🏮',restaurant:'🍽️',shrine:'⛩️',park:'🌸'};
-  const colorMap = {};
-  let allEntries = [], activeFilter = 'all', mapsInitialised = {};
-
-  function getCatColor(cat) {
-    const k = cat.toLowerCase();
-    if (!colorMap[k]) colorMap[k] = PALETTE[Object.keys(colorMap).length % PALETTE.length];
-    return colorMap[k];
-  }
-  function getCatEmoji(cat) { return EMOJI[cat.toLowerCase()] || '📍'; }
-
-  /* ── ESCAPE HTML ── */
-  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-  /* ── EXTRACT LAT/LNG FROM GOOGLE MAPS URL ── */
-  function extractLatLng(url) {
-    if (!url) return null;
-    // Format: @lat,lng,zoom or /place/.../data=...!3dlat!4dlng
-    let m = url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-    // Format: ll=lat,lng
-    m = url.match(/ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-    // Format: ?q=lat,lng
-    m = url.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-    if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-    return null;
-  }
-
-  /* ── GALLERY ── */
-  function buildGallery(photos, cardId) {
-    if (!photos || photos.length === 0) {
-      return `<div class="card-gallery no-photos"><span class="no-photo-label">日本</span></div>`;
-    }
-    const imgs = photos.map((url, i) =>
-      `<img src="${esc(url)}" class="${i===0?'active':''}" alt="Photo ${i+1}" loading="lazy" onerror="this.style.display='none'">`
-    ).join('');
-    const dots = photos.length > 1 ? `
-      <div class="gallery-nav">
-        ${photos.map((_,i) => `<button class="gallery-dot ${i===0?'active':''}" onclick="goSlide('${cardId}',${i})"></button>`).join('')}
-      </div>
-      <button class="gallery-arrow gallery-prev" onclick="slideBy('${cardId}',-1)">‹</button>
-      <button class="gallery-arrow gallery-next" onclick="slideBy('${cardId}',1)">›</button>
-    ` : '';
-    return `<div class="card-gallery" id="gal-${cardId}" data-current="0" data-total="${photos.length}">${imgs}${dots}</div>`;
-  }
-
-  function goSlide(id, idx) {
-    const gal = document.getElementById('gal-' + id);
-    if (!gal) return;
-    const imgs = gal.querySelectorAll('img');
-    const dots = gal.querySelectorAll('.gallery-dot');
-    const total = parseInt(gal.dataset.total);
-    idx = ((idx % total) + total) % total;
-    imgs.forEach((img, i) => img.classList.toggle('active', i === idx));
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
-    gal.dataset.current = idx;
-  }
-
-  function slideBy(id, delta) {
-    const gal = document.getElementById('gal-' + id);
-    if (!gal) return;
-    goSlide(id, parseInt(gal.dataset.current) + delta);
-  }
-
-  /* ── MAP ── */
-  function buildMap(entry, cardId) {
-    const coords = extractLatLng(entry.mapLink);
-    // Only render map if we have coordinates or a map link
-    if (!entry.mapLink && !coords) return '';
-
-    const mapId = 'map-' + cardId;
-    const openBtn = entry.mapLink
-      ? `<a class="map-open-btn" href="${esc(entry.mapLink)}" target="_blank" rel="noopener">Open in Maps ↗</a>`
-      : '';
-
-    return `<div class="card-map-wrap">
-      <div class="card-map" id="${mapId}"></div>
-      ${openBtn}
-    </div>`;
-  }
-
-  function initMaps() {
-    // Initialise Leaflet maps for all cards currently in DOM
-    document.querySelectorAll('.card-map').forEach(el => {
-      const id = el.id;
-      if (mapsInitialised[id]) return;
-      mapsInitialised[id] = true;
-
-      // Find entry by card id (strip "map-" prefix)
-      const cardId = id.replace('map-', '');
-      const entry = allEntries.find(e => e.id === cardId);
-      if (!entry) return;
-
-      const coords = extractLatLng(entry.mapLink);
-      const center = coords || { lat: 35.6762, lng: 139.6503 }; // Tokyo default
-      const zoom   = coords ? 15 : 10;
-
-      const map = L.map(id, {
-        center: [center.lat, center.lng],
-        zoom,
-        scrollWheelZoom: false, // disable on page scroll, enable on map click
-        zoomControl: true,
-      });
-
-      // Enable scroll zoom only when map is focused
-      el.addEventListener('click', () => map.scrollWheelZoom.enable());
-      el.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19,
-      }).addTo(map);
-
-      if (coords) {
-        // Custom red marker matching NSA brand
-        const icon = L.divIcon({
-          html: `<div style="width:14px;height:14px;background:#C8392B;border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.3)"></div>`,
-          className: '',
-          iconSize: [14, 14],
-          iconAnchor: [7, 7],
-        });
-        L.marker([coords.lat, coords.lng], { icon })
-          .addTo(map)
-          .bindPopup(`<strong>${entry.title || 'Location'}</strong>${entry.city ? '<br>' + entry.city : ''}`)
-          .openPopup();
-      } else {
-        // No coordinates — show a note
-        L.popup({ closeButton: false })
-          .setLatLng([center.lat, center.lng])
-          .setContent('Open in Maps for exact location')
-          .addTo(map);
-      }
-    });
-  }
-
-  /* ── FILTERS ── */
-  function setFilter(cat, btn) {
-    activeFilter = cat;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    mapsInitialised = {}; // reset so maps reinit after re-render
-    renderCards();
-  }
-
-  function buildFilters(entries) {
-    const cats = [...new Set(entries.map(e => e.category).filter(Boolean))].sort();
-    const bar = document.getElementById('filter-bar');
-    bar.innerHTML = `<button class="filter-btn active" data-cat="all" onclick="setFilter('all',this)">All</button>`;
-    cats.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn';
-      btn.textContent = getCatEmoji(cat) + ' ' + cat;
-      btn.onclick = function(){ setFilter(cat, this); };
-      bar.appendChild(btn);
-    });
-  }
-
-  /* ── RENDER CARDS ── */
-  function renderCards() {
-    const grid = document.getElementById('guide-grid');
-    const q = (document.getElementById('search-input').value || '').toLowerCase();
-
-    let filtered = allEntries.filter(e => {
-      const catMatch = activeFilter === 'all' || (e.category||'').toLowerCase() === activeFilter.toLowerCase();
-      const qMatch   = !q || [e.title,e.city,e.description,e.category].some(f => (f||'').toLowerCase().includes(q));
-      return catMatch && qMatch;
-    });
-
-    document.getElementById('result-count').textContent =
-      filtered.length === 0 ? 'No results' :
-      filtered.length === 1 ? '1 recommendation' :
-      filtered.length + ' recommendations';
-
-    if (filtered.length === 0) {
-      grid.innerHTML = `<div class="state-message"><div class="state-icon">🔍</div><h3>No matches found</h3><p>Try a different filter or search term.</p></div>`;
-      return;
-    }
-
-    grid.innerHTML = filtered.map(e => {
-      const cat   = e.category || 'Tip';
-      const color = getCatColor(cat);
-      const init  = (e.submittedBy || 'NSA').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const cardId = e.id;
-
-      return `<div class="guide-card">
-        ${buildGallery(e.photos, cardId)}
-        <div class="card-body">
-          <div class="card-meta">
-            <span class="card-category" style="background:${color}">${esc(cat)}</span>
-            <span>${esc(e.city||'Japan')}</span>
+  <div id="submit-anchor"></div>
+  <section class="submit-section">
+    <div class="submit-inner">
+      <div class="ai-badge"><span class="ai-dot"></span> AI-moderated · tips go live instantly</div>
+      <h2 class="section-title">Been to Japan? <em>Share your finds.</em></h2>
+      <p class="section-sub" style="margin-bottom:2rem;">Hidden ramen joints, shrines nobody else visits, the cafe with perfect matcha — help the next NSA member have a better trip.</p>
+      <form id="tip-form" onsubmit="submitTip(event)">
+        <div class="form-grid">
+          <div><label>Place name *</label><input type="text" id="f-name" placeholder="e.g. Ichiran Ramen Shibuya" required></div>
+          <div><label>City *</label>
+            <select id="f-city" required>
+              <option value="">Select city</option>
+              <option>Tokyo</option><option>Kyoto</option><option>Osaka</option>
+              <option>Hiroshima</option><option>Nara</option><option>Sapporo</option>
+              <option>Fukuoka</option><option>Other</option>
+            </select>
           </div>
-          <div class="card-title">${esc(e.title||'Untitled')}</div>
-          ${e.city ? `<div class="card-city">📍 ${esc(e.city)}</div>` : ''}
-          ${e.description ? `<div class="card-desc">${esc(e.description)}</div>` : ''}
-          ${(e.website||e.mapLink) ? `<div class="card-links">
-            ${e.website ? `<a class="card-link" href="${esc(e.website)}" target="_blank" rel="noopener">🌐 Website</a>` : ''}
-            ${e.mapLink  ? `<a class="card-link" href="${esc(e.mapLink)}" target="_blank" rel="noopener">🗺️ Google Maps</a>` : ''}
-          </div>` : ''}
-          <div class="card-footer">
-            <div class="card-author">
-              <div class="author-dot">${init}</div>
-              <span>${esc(e.submittedBy||'NSA Member')}</span>
-            </div>
-            ${e.date ? `<span>${esc(e.date)}</span>` : ''}
+          <div><label>Category *</label>
+            <select id="f-cat" required>
+              <option value="">Select category</option>
+              <option>Food</option><option>Cafe</option><option>Sightseeing</option>
+              <option>Shopping</option><option>Stay</option><option>Other</option>
+            </select>
+          </div>
+          <div><label>Your name</label><input type="text" id="f-by" placeholder="As you'd like it shown"></div>
+          <div class="form-full"><label>Description *</label><textarea id="f-desc" placeholder="Your recommendation in your own words…" required></textarea></div>
+          <div class="form-full"><label>Google Maps link</label><input type="url" id="f-map" placeholder="https://maps.google.com/..."></div>
+        </div>
+        <button type="submit" class="form-submit-btn" id="submit-btn">Submit tip →</button>
+        <div class="mod-status" id="mod-reviewing">
+          <div class="spinner"></div>
+          <div>
+            <div style="font-size:14px;font-weight:500;color:var(--gold);margin-bottom:2px;">Reviewing your tip…</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.5);">AI is checking this is a genuine, appropriate Japan travel recommendation.</div>
           </div>
         </div>
-        ${buildMap(e, cardId)}
-      </div>`;
-    }).join('');
+        <div class="mod-status" id="mod-approved">
+          <div class="mod-title" style="color:#4ade80;">✓ Tip approved and published!</div>
+          <div class="mod-reason" id="mod-approved-reason"></div>
+        </div>
+        <div class="mod-status" id="mod-rejected">
+          <div class="mod-title" style="color:var(--red-mid);">✗ Tip not approved</div>
+          <div class="mod-reason" id="mod-rejected-reason"></div>
+        </div>
+      </form>
+    </div>
+  </section>
 
-    // Init Leaflet maps after DOM is ready
-    setTimeout(initMaps, 50);
+  <!-- ADMIN QUEUE -->
+  <div class="admin-section">
+    <div class="admin-inner">
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">🔒 Admin review queue</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:4px;">Override AI decisions — manually approve or reject any submission.</div>
+        </div>
+        <div class="admin-lock">
+          <input type="password" id="admin-pw" placeholder="Admin password">
+          <button onclick="unlockAdmin()">Unlock</button>
+        </div>
+      </div>
+      <div id="admin-locked" style="text-align:center;padding:2rem;color:var(--muted);font-size:14px;">Enter the admin password to view the review queue.</div>
+      <div id="admin-content" style="display:none;">
+        <div class="queue-list" id="queue-list"></div>
+        <div id="empty-queue" style="display:none;text-align:center;padding:2.5rem;color:var(--muted);font-size:14px;">No submissions in the queue yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GUESTS PAGE -->
+<div class="page" id="page-guests">
+  <div class="guests-hero">
+    <span class="guests-hero-badge">✦ Special Guests</span>
+    <h1>The legends who've<br>shaped our community</h1>
+    <p>Faculty members, mascots, and honorary NSA legends — and their Japan travel takes.</p>
+  </div>
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:.5rem;">Our <em>special guests</em></h2>
+    <p class="section-sub">From beloved campus cats to the academics who fuel our passion for Japan.</p>
+    <div class="guests-grid" id="guests-grid"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-jp">旅行</div>
+  <div class="footer-links">
+    <a href="https://unswnsa.github.io/NipponStudentAssociation/" target="_blank">NSA Home</a>
+    <a href="https://www.instagram.com/nsaunsw/" target="_blank">Instagram</a>
+    <a href="https://campus.hellorubric.com/?s=2089" target="_blank">Join NSA</a>
+  </div>
+  <div>NSA UNSW Japan Guide · Community-powered · © 2026</div>
+</footer>
+<div id="toast"></div>
+
+<script>
+const TIPS_SEED = [
+  {name:"Ichiran Ramen Shinjuku",city:"Tokyo",cat:"Food",desc:"Solo dining booths so you can really savour the broth. Order the special red sauce — absolute heaven at 2am after a night out.",by:"Mei L.",map:"https://maps.google.com",emoji:"🍜"},
+  {name:"Tsujiri Gion",city:"Kyoto",cat:"Cafe",desc:"The best matcha soft serve in Japan, no debate. Queue is always long but moves fast. Get the parfait if you're hungry.",by:"Tom H.",map:"https://maps.google.com",emoji:"🍵"},
+  {name:"Fushimi Inari at Sunrise",city:"Kyoto",cat:"Sightseeing",desc:"Go at 5:30am and you'll have the torii gates almost to yourself. Pack a jacket — cold and misty in the morning.",by:"Sakura W.",map:"https://maps.google.com",emoji:"⛩️"},
+  {name:"Dotonbori Street Eats",city:"Osaka",cat:"Food",desc:"The takoyaki from the stall near Glico Man is hands-down the best. Walk west along the canal and try everything.",by:"James K.",map:"https://maps.google.com",emoji:"🐙"},
+  {name:"Shimokitazawa Vintage Shops",city:"Tokyo",cat:"Shopping",desc:"Dozens of vintage clothing shops packed into a few lanes. Budget 3–4 hours. Best prices on weekday mornings.",by:"Yuki T.",map:"https://maps.google.com",emoji:"🧥"},
+  {name:"Nishiki Market",city:"Kyoto",cat:"Food",desc:"'Kyoto's Kitchen' — try the pickled vegetables and fresh tofu. Great for snacking your way through. Go before noon.",by:"Angela P.",map:"https://maps.google.com",emoji:"🥢"},
+  {name:"Arashiyama Bamboo Grove",city:"Kyoto",cat:"Sightseeing",desc:"Stunning but crowded midday. Go early morning or evening. The monkey park nearby is worth the climb.",by:"Ren O.",map:"https://maps.google.com",emoji:"🎋"},
+  {name:"Kuromon Ichiba Market",city:"Osaka",cat:"Food",desc:"Osaka's biggest fresh market. The crab vendor on the left does incredible grilled crab legs on the spot.",by:"Lisa C.",map:"https://maps.google.com",emoji:"🦀"},
+  {name:"Café de L'Ambre",city:"Tokyo",cat:"Cafe",desc:"80-year-old coffee legend in Ginza. The iced coffee aged 5–15 years is unlike anything you've tasted.",by:"David N.",map:"https://maps.google.com",emoji:"☕"},
+  {name:"Hiroshima Peace Memorial",city:"Hiroshima",cat:"Sightseeing",desc:"Deeply moving and important. Allow a full half day. The museum changed how I think about history.",by:"Priya M.",map:"https://maps.google.com",emoji:"🕊️"},
+  {name:"Nara Deer Park",city:"Nara",cat:"Sightseeing",desc:"Buy the shika senbei deer biscuits and get absolutely mobbed. The deer are genuinely polite — they bow!",by:"Charlie F.",map:"https://maps.google.com",emoji:"🦌"},
+  {name:"Akihabara Electronics",city:"Tokyo",cat:"Shopping",desc:"Multi-floor arcades and specialty electronics. The retro game shops on upper floors of smaller buildings are gems.",by:"Hiro S.",map:"https://maps.google.com",emoji:"🎮"},
+];
+
+const GUESTS = [
+  {name:"Catman",role:"Campus Legend",title:"Unofficial Mascot · UNSW Quadrangle",avatar:"🐱",avatarClass:"gold",roleClass:"gold-role",badge:"OG",featured:true,quote:"Every good adventure starts with a nap in the sun and ends with food. Japan understands this deeply.",tipLabel:"Catman's top Japan picks",tips:["Neko Café Calico in Shinjuku — 5 stars, no notes","Tuna sashimi at Tsukiji Outer Market, obviously","The heated seats on every shinkansen — pure luxury","Ueno Park in cherry blossom season for optimal napping spots"],tags:["9 Lives of Experience","Nap Expert","Fish Connoisseur"]},
+  {name:"Dr. Kenji Watanabe",role:"Faculty Guest",title:"Senior Lecturer in Japanese Studies · UNSW Arts",avatar:"👨‍🏫",avatarClass:"",roleClass:"",badge:null,featured:false,quote:"Japan rewards the curious. Go beyond the guidebooks — the best conversations happen in tiny izakayas where nobody speaks English.",tipLabel:"Dr. Watanabe's cultural picks",tips:["Yanaka district in Tokyo — old Shitamachi atmosphere, still intact","Any local shotengai (covered shopping street) outside tourist zones","Onsen town Kinosaki for a proper ryokan experience","Kurama, north of Kyoto, for mountain temples and cedar forests"],tags:["Japanese Studies","Cultural History","NSA Advisor"]},
+  {name:"Professor Yumi Sato",role:"Faculty Guest",title:"Associate Prof. of Japanese Linguistics · UNSW Arts",avatar:"👩‍🎓",avatarClass:"",roleClass:"",badge:null,featured:false,quote:"Even a handful of Japanese phrases transforms your trip entirely. Locals light up when you try — it's the greatest travel hack there is.",tipLabel:"Prof. Sato's language & local tips",tips:["Learn 'sumimasen' and 'arigatou gozaimasu' — they go a long way","Konbini are genuinely incredible — eat at 7-Eleven","Google Translate camera mode is your best friend in restaurants","Cafés in bookshops like Daikanyama Tsutaya are perfect study breaks"],tags:["Linguistics","Language Learning","Cultural Exchange"]},
+  {name:"Rex",role:"Campus Legend",title:"Beloved Office Dog · NSA UNSW HQ",avatar:"🐶",avatarClass:"",roleClass:"",badge:null,featured:false,quote:"I hear Japan has dedicated dog cafés, dog-friendly onsen, and they give dogs little booties in the mountains. I'm applying for a visa.",tipLabel:"Rex's wishlist",tips:["Wanko cafés in Harajuku — apparently paradise","Mount Takao near Tokyo — dog-friendly hiking trail","The giant Shiba Inu plushies at every souvenir shop","Shiroi Koibito cookies from Hokkaido — allegedly perfect"],tags:["Good Boy","10/10 Rating","Treats Enthusiast"]},
+];
+
+let liveTips = [...TIPS_SEED];
+let allSubmissions = [];
+let adminUnlocked = false;
+const ADMIN_PASSWORD = "nsa2026";
+let fs = {city:'all', cat:'all'};
+
+function tagClass(c){return {Food:'tag-food',Cafe:'tag-cafe',Sightseeing:'tag-sight',Stay:'tag-stay',Shopping:'tag-shopping'}[c]||'tag-other';}
+
+function renderTips(){
+  const grid = document.getElementById('tips-grid');
+  const f = liveTips.filter(t=>(fs.city==='all'||t.city===fs.city)&&(fs.cat==='all'||t.cat===fs.cat));
+  if(!f.length){grid.innerHTML='<p style="color:var(--muted);font-size:15px;grid-column:1/-1;padding:2rem 0;">No tips found for this filter.</p>';return;}
+  grid.innerHTML=f.map(t=>`<div class="tip-card"><div class="tip-img">${t.emoji}</div><div class="tip-body"><div class="tip-meta"><span class="tip-tag ${tagClass(t.cat)}">${t.cat}</span><span class="tip-city">${t.city}</span></div><h3>${t.name}</h3><p>${t.desc}</p></div><div class="tip-footer"><span class="tip-by">by <strong>${t.by}</strong></span><span class="tip-map"><a href="${t.map||'#'}" target="_blank">View on map →</a></span></div></div>`).join('');
+  document.getElementById('tip-count').textContent=liveTips.length;
+}
+
+function filterTips(type,val){
+  fs[type]=val;
+  document.querySelectorAll(type==='city'?'#city-filters .filter-btn':'#cat-filters .filter-btn').forEach(b=>b.classList.toggle('active',b.dataset[type]===val));
+  renderTips();
+}
+
+function renderGuests(){
+  document.getElementById('guests-grid').innerHTML=GUESTS.map(g=>`<div class="guest-card ${g.featured?'featured':''}"><div class="guest-header"><div class="guest-avatar ${g.avatarClass}">${g.avatar}</div><div class="guest-info"><div class="guest-role ${g.roleClass}">${g.role}</div><h2>${g.name}</h2><div class="guest-title-sub">${g.title}</div></div>${g.badge?`<span class="guest-badge">${g.badge}</span>`:''}</div><div class="guest-body"><p class="guest-quote">"${g.quote}"</p><div class="guest-tip-label">${g.tipLabel}</div><div class="guest-tips">${g.tips.map(t=>`<div class="guest-tip-item">${t}</div>`).join('')}</div></div><div class="guest-footer">${g.tags.map(t=>`<span class="guest-tag">${t}</span>`).join('')}</div></div>`).join('');
+}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-links a[id]').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById('nav-'+id);
+  if(el)el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function setModStatus(which){
+  ['reviewing','approved','rejected'].forEach(s=>{
+    const el=document.getElementById('mod-'+s);
+    el.style.display='none';
+    el.className='mod-status';
+  });
+  if(which){
+    const el=document.getElementById('mod-'+which);
+    el.classList.add('mod-'+which);
   }
+}
 
-  /* ── STATS ── */
-  function updateStats(entries) {
-    document.getElementById('stat-entries').textContent = entries.length;
-    document.getElementById('stat-cities').textContent  = new Set(entries.map(e=>e.city).filter(Boolean)).size;
-  }
+async function moderateTip(data){
+  const prompt=`You are a content moderator for NSA UNSW's Japan travel guide — a community resource for UNSW university students.
 
-  /* ── LOAD ── */
-  async function loadGuide() {
-    try {
-      const res = await fetch('data.json?t=' + Date.now());
-      if (!res.ok) throw new Error('not found');
-      const data = await res.json();
-      allEntries = data.entries || data || [];
-      if (!allEntries.length) throw new Error('empty');
-      updateStats(allEntries);
-      buildFilters(allEntries);
-      renderCards();
-      if (data.formUrl) document.getElementById('submit-link').href = data.formUrl;
-    } catch(e) {
-      document.getElementById('stat-entries').textContent = '0';
-      document.getElementById('stat-cities').textContent  = '0';
-      document.getElementById('guide-grid').innerHTML = `<div class="state-message"><div class="state-icon">🌸</div><h3>No entries yet</h3><p>Be the first to submit a tip!</p></div>`;
-      document.getElementById('result-count').textContent = '0 recommendations';
+Review this user submission and decide whether to approve or reject it.
+
+APPROVE if: a genuine, helpful Japan travel recommendation about a real place (food, cafe, sightseeing, shopping, accommodation, activity, etc.), written in good faith, suitable for a university student audience, and actually related to travelling in Japan.
+
+REJECT if: spam, offensive or inappropriate language, obviously fake/nonsensical, not about Japan travel at all, promotional content, harmful content, or completely unintelligible.
+
+Submission:
+- Place name: ${data.name}
+- City: ${data.city}
+- Category: ${data.cat}
+- Description: ${data.desc}
+- Submitted by: ${data.by||'Anonymous'}
+
+Respond ONLY with valid JSON, no other text:
+{"approved":true,"reason":"One friendly sentence explaining approval."}
+or
+{"approved":false,"reason":"One friendly sentence explaining why it was rejected and what they could fix."}`;
+
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})
+  });
+  const result=await res.json();
+  const text=result.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+  return JSON.parse(text);
+}
+
+async function submitTip(e){
+  e.preventDefault();
+  const data={
+    name:document.getElementById('f-name').value.trim(),
+    city:document.getElementById('f-city').value,
+    cat:document.getElementById('f-cat').value,
+    desc:document.getElementById('f-desc').value.trim(),
+    by:document.getElementById('f-by').value.trim()||'Anonymous',
+    map:document.getElementById('f-map').value.trim()||'https://maps.google.com',
+  };
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;btn.textContent='Reviewing…';
+  setModStatus('reviewing');
+  const sid=Date.now();
+  allSubmissions.push({id:sid,...data,verdict:'pending',timestamp:new Date()});
+  try{
+    const v=await moderateTip(data);
+    setModStatus(null);
+    if(v.approved){
+      const em={Food:'🍜',Cafe:'☕',Sightseeing:'⛩️',Shopping:'🛍️',Stay:'🏡',Other:'📍'};
+      liveTips.unshift({...data,emoji:em[data.cat]||'📍'});
+      renderTips();
+      setModStatus('approved');
+      document.getElementById('mod-approved-reason').textContent=v.reason;
+      document.getElementById('tip-form').reset();
+      allSubmissions.find(s=>s.id===sid).verdict='approved';
+      toast('✓ Your tip is now live in the guide!');
+    }else{
+      setModStatus('rejected');
+      document.getElementById('mod-rejected-reason').textContent=v.reason;
+      const sub=allSubmissions.find(s=>s.id===sid);
+      sub.verdict='rejected';sub.rejectReason=v.reason;
     }
+  }catch(err){
+    setModStatus('rejected');
+    document.getElementById('mod-rejected-reason').textContent='Moderation service temporarily unavailable — please try again shortly.';
   }
+  btn.disabled=false;btn.textContent='Submit tip →';
+  if(adminUnlocked)renderQueue();
+}
 
-  loadGuide();
+function unlockAdmin(){
+  if(document.getElementById('admin-pw').value===ADMIN_PASSWORD){
+    adminUnlocked=true;
+    document.getElementById('admin-locked').style.display='none';
+    document.getElementById('admin-content').style.display='block';
+    renderQueue();toast('Admin panel unlocked.');
+  }else{toast('Incorrect password.');}
+}
+
+function renderQueue(){
+  const list=document.getElementById('queue-list');
+  const empty=document.getElementById('empty-queue');
+  if(!allSubmissions.length){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=[...allSubmissions].reverse().map(s=>`
+    <div class="queue-item" id="qi-${s.id}">
+      <div class="queue-item-header"><h4>${s.name}</h4><span class="ai-verdict verdict-${s.verdict==='approved'?'pass':s.verdict==='rejected'?'fail':'pending'}">AI: ${s.verdict}</span></div>
+      <div class="queue-meta">${s.city} · ${s.cat} · by ${s.by} · ${s.timestamp.toLocaleTimeString()}</div>
+      <div class="queue-desc">${s.desc}</div>
+      ${s.rejectReason?`<div style="font-size:12px;color:var(--muted);margin-bottom:.75rem;">AI reason: ${s.rejectReason}</div>`:''}
+      <div class="queue-actions">
+        <button class="btn-approve" onclick="adminApprove(${s.id})">✓ Approve</button>
+        <button class="btn-reject" onclick="adminReject(${s.id})">✗ Reject</button>
+      </div>
+    </div>`).join('');
+}
+
+function adminApprove(id){
+  const s=allSubmissions.find(s=>s.id===id);if(!s)return;
+  if(!liveTips.find(t=>t.name===s.name&&t.by===s.by)){
+    const em={Food:'🍜',Cafe:'☕',Sightseeing:'⛩️',Shopping:'🛍️',Stay:'🏡',Other:'📍'};
+    liveTips.unshift({name:s.name,city:s.city,cat:s.cat,desc:s.desc,by:s.by,map:s.map,emoji:em[s.cat]||'📍'});
+    renderTips();
+  }
+  s.verdict='approved';renderQueue();toast('Tip manually approved and published.');
+}
+
+function adminReject(id){
+  const s=allSubmissions.find(s=>s.id===id);if(!s)return;
+  const idx=liveTips.findIndex(t=>t.name===s.name&&t.by===s.by);
+  if(idx>-1){liveTips.splice(idx,1);renderTips();}
+  s.verdict='rejected';renderQueue();toast('Tip rejected and removed from guide.');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+renderTips();
+renderGuests();
 </script>
 </body>
 </html>
