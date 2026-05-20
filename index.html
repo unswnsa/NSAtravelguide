@@ -946,7 +946,7 @@
     if (!city)     { highlight('f-city');     return showStatus('error', 'Please select a city.'); }
     if (!category) { highlight('f-category'); return showStatus('error', 'Please select a category.'); }
     if (!desc)     { highlight('f-desc');     return showStatus('error', 'Please add a description.'); }
-    if (desc.length < 20) { highlight('f-desc'); return showStatus('error', 'Description is a bit short — add more detail!'); }
+    if (desc.length < 8) { highlight('f-desc'); return showStatus('error', 'Description is a bit short — add more detail!'); }
 
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
